@@ -1,0 +1,4435 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<script>
+  // Some Android WebView wrappers don't fully honor the viewport meta tag on
+  // first paint (or after rotation), which inflates text/fields far beyond
+  // their intended CSS size. Re-asserting it defensively keeps sizing correct.
+  (function(){
+    function lockViewport(){
+      var vp = document.querySelector('meta[name="viewport"]');
+      if(vp) vp.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover');
+    }
+    lockViewport();
+    document.addEventListener('DOMContentLoaded', lockViewport);
+    window.addEventListener('load', lockViewport);
+    window.addEventListener('resize', lockViewport);
+    window.addEventListener('orientationchange', lockViewport);
+  })();
+</script>
+<title>سجل الحالات الاسعافية</title>
+<link rel="manifest" href="./manifest.json">
+<meta name="theme-color" content="#2f5a8a">
+<link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAIAAADdvvtQAAADOklEQVR4nO3dQW4cVRRA0YrFLjLONLCLSCwB1uExGcM6vAQklmFlmnH2waDBaQUIdt0u+jX/nLnlr+rrV7+t6t+vvv/pt43n+fTxw7WXMM7dtRdwS16/eXvtJYwjIBIBvYwh9AUBkQiIREAv5i52TkAkAiIREImA9rANeiIgEgGRCIhEQDvZBp0IiERAJAIiERCJgEgEtJ83YpuAiAREIiASAZEIiERAJAIiERCJgEgERCIgEgGRCIhEQCQCIhEQiYBIBLSfQ1s3AREJiERAJAIiERCJgHbyFuxEQCTfXHsB1/fr+3e7fu7dtm3f/fjLZRdzc1afQHvr+cPjw/3jw/2lFnOL1p1AMZ1zjw/3y46i1SfQpSw7hxYN6ILj58maDa0Y0BH1nCzY0IoBcUECIhEQiYBIBEQiIBIBkQiIREAkAiIREImASAREIiASAZEIiERAJAIiERCJgEgERCIgEgGRCIhEQCQCIhEQiYBIBEQy94Cp487QONRBB3SMPcBq6AS60XqOM/YsvXETSDpfMfAsvaETiH8ybQ7NCsj4eY5RDQ0KSD3PN6ehQQFxiwREIiASAZEIiERAJAIiERCJgEgERCIgEgGRCIjkzvefU9xt2/bp4wcZsc/nR1qfGnr95u2VFsPt+Ztnos+nkZj4un95qP6/ienP3+KJxNvzgk9l/HWftC8p+63/k1ff/vDztdfw2ZxHfYeb8+Ee/wcimRXQnD+syUZdpVkBbcOuzkDTrs+4gLZ512iOgVdm1ib6nA31uYHpnMwN6DiHpjn2lT7IxFsYN0RAJAIiERCJgEgERCIgEgGRCIhEQCQCIhEQiYBIBEQiIBIBkQiIREAkAiIREImASAREIiASAZEIiERAJAIiERDJigEdd/7BaicrbGsGxAUtGtARo2LB8bMtG9B26dd7zXq2lQPaLveqL1vPtuYJZV8oB5atnM6JgEiWvoXRCYhEQCQCIhEQiYBIBEQiIBIBkQiIREAkAiIREImASAREIiASAZEIiERAJAIiERCJgEgERCIgEgGRCIhEQCQCIhEQiYBIBEQiIBIBkQiIREAkAiIREImASAREIiASAZEIiERAJAIi+R3uH3NjTZWJ1QAAAABJRU5ErkJggg==">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="سجل الحالات">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap');
+
+  :root{
+    --color-primary:#2f5a8a;
+    --color-primary-dark:#16324f;
+    --color-primary-light:#4a7fb8;
+    --color-primary-soft:#eaf1f8;
+    --color-accent-gold:#b8862e;
+    --color-accent-gold-soft:#faf1de;
+    --color-bg:#f2f4f8;
+    --color-card:#ffffff;
+    --color-border:#e3e7ee;
+    --color-text:#1c2530;
+    --color-text-muted:#6b7686;
+    --color-danger:#c1443a;
+    --color-danger-soft:#fbeae8;
+    --color-transfer:#a9761e;
+    --color-transfer-soft:#fbf1de;
+    --radius-lg:20px;
+    --radius-md:14px;
+    --radius-sm:10px;
+    --shadow-card:0 3px 14px rgba(22,50,79,0.07), 0 1px 3px rgba(22,50,79,0.05);
+    --shadow-elevated:0 18px 44px rgba(22,50,79,0.18), 0 4px 14px rgba(22,50,79,0.10);
+    --shadow-focus:0 0 0 3.5px rgba(47,90,138,0.14);
+    --ease-smooth:cubic-bezier(0.4,0,0.2,1);
+    --ease-spring:cubic-bezier(0.32,1.3,0.44,1);
+    --ease-out:cubic-bezier(0.16,1,0.3,1);
+  }
+
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  html{
+    -webkit-text-size-adjust:100%;
+    -moz-text-size-adjust:100%;
+    -ms-text-size-adjust:100%;
+    text-size-adjust:100%;
+  }
+  body{
+    font-family:'Tajawal', 'Segoe UI', sans-serif;
+    background:var(--color-bg);
+    color:var(--color-text);
+    min-height:100vh;
+    -webkit-tap-highlight-color:transparent;
+    overscroll-behavior-y:contain;
+  }
+  button, .radio-option, .select-trigger, .tab-btn, .dd-option{
+    touch-action:manipulation;
+    -webkit-tap-highlight-color:transparent;
+    user-select:none;
+    -webkit-user-select:none;
+  }
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:0.001ms !important; transition-duration:0.001ms !important;}
+  }
+
+  .app{
+    max-width:520px;
+    margin:0 auto;
+    min-height:100vh;
+    background:var(--color-bg);
+    display:flex;
+    flex-direction:column;
+  }
+
+  /* Header */
+  .header{
+    background:linear-gradient(160deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+    padding:clamp(16px,5vw,22px) clamp(14px,4.5vw,20px) clamp(18px,5vw,22px);
+    color:#fff;
+    position:relative;
+    overflow:hidden;
+    border-radius:0 0 var(--radius-lg) var(--radius-lg);
+    box-shadow:0 8px 24px rgba(22,50,79,0.22);
+  }
+  .header::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:
+      radial-gradient(circle at 92% -12%, rgba(184,134,46,0.28), transparent 55%),
+      radial-gradient(circle at -10% 110%, rgba(255,255,255,0.08), transparent 50%);
+    pointer-events:none;
+  }
+  .header-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    position:relative;
+  }
+  .header-titles h1{
+    margin:0;
+    font-size:clamp(15.5px,4.6vw,19px);
+    font-weight:900;
+    letter-spacing:0.2px;
+  }
+  .header-titles p{
+    margin:5px 0 0;
+    font-size:clamp(12px,3.6vw,15px);
+    font-weight:650;
+    color:rgba(255, 255, 255, 0.85);
+  }
+  .header-badge{
+    width:32px;
+    height:32px;
+    border-radius:50%;
+    background:#fff;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-shrink:0;
+    box-shadow:0 3px 10px rgba(0,0,0,0.18);
+    cursor:pointer;
+    user-select:none;
+    -webkit-tap-highlight-color:transparent;
+    transition:transform 0.15s var(--ease-smooth);
+  }
+  .header-badge:active{transform:scale(0.92);}
+  .header-badge span{
+    width:8px;
+    height:8px;
+    border-radius:50%;
+    background:var(--color-accent-gold);
+  }
+
+  /* Install-app button — hidden until the browser signals the app can be installed */
+  .install-badge{
+    display:none;
+    align-items:center;
+    gap:5px;
+    background:rgba(255,255,255,0.14);
+    border:1px solid rgba(255,255,255,0.32);
+    color:#fff;
+    font-family:inherit;
+    font-size:11px;
+    font-weight:700;
+    padding:7px 11px;
+    border-radius:999px;
+    cursor:pointer;
+    flex-shrink:0;
+    -webkit-tap-highlight-color:transparent;
+    transition:transform 0.15s var(--ease-smooth), background 0.15s var(--ease-smooth);
+  }
+  .install-badge.show{display:flex;}
+  .install-badge:active{transform:scale(0.94); background:rgba(255,255,255,0.24);}
+  .install-badge svg{width:14px; height:14px; flex-shrink:0;}
+
+  /* Bottom navigation (thumb-reach, native-app pattern) */
+  .bottom-nav{
+    position:fixed;
+    bottom:0;
+    left:0;
+    right:0;
+    max-width:520px;
+    margin:0 auto;
+    display:flex;
+    gap:4px;
+    background:rgba(255,255,255,0.96);
+    backdrop-filter:blur(14px);
+    -webkit-backdrop-filter:blur(14px);
+    border-top:1px solid var(--color-border);
+    box-shadow:0 -8px 28px rgba(22,50,79,0.12);
+    padding:7px 10px calc(7px + env(safe-area-inset-bottom));
+    z-index:80;
+  }
+  .tab-indicator{
+    position:absolute;
+    top:6px;
+    bottom:6px;
+    left:0;
+    width:0;
+    border-radius:14px;
+    background:var(--color-primary-soft);
+    transition:transform 0.32s var(--ease-spring), width 0.32s var(--ease-spring);
+    will-change:transform;
+    z-index:0;
+  }
+  .tab-btn{
+    flex:1;
+    position:relative;
+    z-index:1;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:2px;
+    border:none;
+    background:transparent;
+    color:var(--color-text-muted);
+    font-family:inherit;
+    font-size:9.5px;
+    font-weight:700;
+    padding:6px 4px 5px;
+    border-radius:14px;
+    cursor:pointer;
+    transition:color 0.25s var(--ease-smooth), transform 0.15s var(--ease-smooth);
+  }
+  .tab-btn svg{
+    width:18px;
+    height:18px;
+    stroke:currentColor;
+    transition:transform 0.28s var(--ease-spring);
+  }
+  .tab-btn:active{transform:scale(0.94);}
+  .tab-btn.active{color:var(--color-primary-dark);}
+  .tab-btn.active svg{transform:translateY(-1px) scale(1.05);}
+
+  /* Body */
+  .body{
+    flex:1;
+    padding:clamp(16px,4.6vw,20px) clamp(12px,3.6vw,16px) calc(88px + env(safe-area-inset-bottom));
+    position:relative;
+    overflow-x:hidden;
+  }
+  .screen{display:none;}
+  .screen.active{
+    display:block;
+    animation:screen-in-fade 0.3s var(--ease-out);
+  }
+  .screen.active.dir-forward{animation:screen-in-forward 0.32s var(--ease-out);}
+  .screen.active.dir-back{animation:screen-in-back 0.32s var(--ease-out);}
+  @keyframes screen-in-fade{
+    from{opacity:0; transform:translateY(10px);}
+    to{opacity:1; transform:translateY(0);}
+  }
+  @keyframes screen-in-forward{
+    from{opacity:0; transform:translateX(-18px);}
+    to{opacity:1; transform:translateX(0);}
+  }
+  @keyframes screen-in-back{
+    from{opacity:0; transform:translateX(18px);}
+    to{opacity:1; transform:translateX(0);}
+  }
+
+  .card{
+    background:var(--color-card);
+    border:1px solid var(--color-border);
+    border-radius:var(--radius-lg);
+    padding:clamp(16px,4.6vw,20px) clamp(14px,4vw,18px);
+    box-shadow:var(--shadow-card);
+    transition:box-shadow 0.2s var(--ease-smooth);
+  }
+
+  .field{margin-bottom:14px;}
+  .field:last-child{margin-bottom:0;}
+  .field-label{
+    display:block;
+    font-size:clamp(10.5px,2.9vw,11.5px);
+    font-weight:700;
+    color:var(--color-primary-dark);
+    margin-bottom:6px;
+    letter-spacing:0.1px;
+  }
+  .field input[type="text"],
+  .field input[type="number"],
+  .field input[type="date"],
+  .field select,
+  .field textarea{
+    width:100%;
+    font-family:inherit;
+    font-size:clamp(12px,3.3vw,13.5px);
+    color:var(--color-text);
+    background:#fbfcfd;
+    border:1.5px solid var(--color-border);
+    border-radius:var(--radius-md);
+    padding:clamp(8px,2.4vw,10px) clamp(9px,2.6vw,11px);
+    outline:none;
+    transition:border-color 0.18s var(--ease-smooth), background 0.18s var(--ease-smooth), box-shadow 0.18s var(--ease-smooth);
+  }
+  .field textarea{resize:vertical; min-height:64px; line-height:1.5;}
+  .field input:focus,
+  .field select:focus,
+  .field textarea:focus{
+    border-color:var(--color-primary);
+    background:#fff;
+    box-shadow:var(--shadow-focus);
+  }
+  .field select{
+    appearance:none;
+    -webkit-appearance:none;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='9' viewBox='0 0 14 9'%3E%3Cpath d='M1 1L7 7L13 1' stroke='%236b7686' stroke-width='1.8' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat:no-repeat;
+    background-position:left 13px center;
+    padding-left:34px;
+  }
+
+  /* ---------- custom select trigger (replaces native <select> UI) ---------- */
+  .select-trigger{
+    width:100%;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    font-family:inherit;
+    font-size:clamp(12px,3.3vw,13.5px);
+    text-align:right;
+    color:var(--color-text);
+    background:#fbfcfd;
+    border:1.5px solid var(--color-border);
+    border-radius:var(--radius-md);
+    padding:clamp(8px,2.4vw,10px) clamp(9px,2.6vw,11px);
+    cursor:pointer;
+    transition:border-color 0.2s var(--ease-smooth), background 0.2s var(--ease-smooth),
+               box-shadow 0.2s var(--ease-smooth), transform 0.12s var(--ease-smooth);
+  }
+  .select-trigger:active{transform:scale(0.99);}
+  .select-trigger.open{
+    border-color:var(--color-primary);
+    background:#fff;
+    box-shadow:var(--shadow-focus);
+  }
+  .select-trigger .st-value{
+    flex:1;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+    font-weight:500;
+  }
+  .select-trigger .st-value.placeholder{
+    color:var(--color-text-muted);
+    font-weight:400;
+  }
+  .select-trigger .st-chevron{
+    width:14px;
+    height:9px;
+    flex-shrink:0;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='9' viewBox='0 0 14 9'%3E%3Cpath d='M1 1L7 7L13 1' stroke='%236b7686' stroke-width='1.8' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat:no-repeat;
+    background-position:center;
+    transition:transform 0.28s var(--ease-smooth);
+  }
+  .select-trigger.open .st-chevron{transform:rotate(180deg);}
+
+  /* ---------- free-text combo field (typeable input + separate arrow field showing saved suggestions) ---------- */
+  .combo-input-wrap{
+    position:relative;
+    display:flex;
+    align-items:stretch;
+    gap:8px;
+  }
+  .field .combo-input-wrap input[type="text"]{
+    flex:1 1 auto;
+    min-width:0;
+  }
+  .combo-arrow-btn{
+    position:static;
+    flex:0 0 auto;
+    width:46px;
+    border:1.5px solid var(--color-border);
+    background:#fbfcfd;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:var(--radius-md);
+    padding:0;
+    transition:border-color 0.18s var(--ease-smooth), background 0.18s var(--ease-smooth), box-shadow 0.18s var(--ease-smooth);
+  }
+  .combo-arrow-btn:active{background:var(--color-primary-soft); transform:scale(0.97);}
+  .combo-arrow-btn.open{
+    border-color:var(--color-primary);
+    background:#fff;
+    box-shadow:var(--shadow-focus);
+  }
+  .combo-arrow-btn .st-chevron{
+    width:16px;
+    height:11px;
+    flex-shrink:0;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='11' viewBox='0 0 16 11'%3E%3Cpath d='M1 1L8 8L15 1' stroke='%232f5a8a' stroke-width='2.4' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat:no-repeat;
+    background-position:center;
+    transition:transform 0.28s var(--ease-smooth);
+  }
+  .combo-arrow-btn.open .st-chevron{transform:rotate(180deg);}
+
+  /* ---------- inline anchored dropdown (attached to its field, no popup / no search) ---------- */
+  .field{position:relative;}
+  .dd-panel{
+    position:absolute;
+    bottom:calc(100% + 6px);
+    top:auto;
+    left:0;
+    right:0;
+    background:var(--color-card);
+    border:1.5px solid var(--color-border);
+    border-radius:var(--radius-md);
+    box-shadow:var(--shadow-elevated);
+    z-index:60;
+    max-height:0;
+    opacity:0;
+    overflow:hidden;
+    pointer-events:none;
+    transform:translateY(6px) scaleY(0.96);
+    transform-origin:bottom center;
+    transition:max-height 0.24s var(--ease-out), opacity 0.18s var(--ease-smooth), transform 0.22s var(--ease-spring);
+  }
+  .dd-panel.open{
+    max-height:252px;
+    opacity:1;
+    pointer-events:auto;
+    transform:translateY(0) scaleY(1);
+    overflow-y:auto;
+    -webkit-overflow-scrolling:touch;
+  }
+  .dd-list{padding:6px;}
+  .dd-option{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    padding:10px 10px;
+    border-radius:var(--radius-sm);
+    font-size:13.5px;
+    font-weight:600;
+    color:var(--color-text);
+    cursor:pointer;
+    transition:background 0.15s var(--ease-smooth), transform 0.1s var(--ease-smooth);
+  }
+  .dd-option:active{transform:scale(0.98);}
+  .dd-option.selected{
+    background:var(--color-primary-soft);
+    color:var(--color-primary-dark);
+    font-weight:800;
+  }
+  .dd-option .st-check{
+    width:15px;
+    height:15px;
+    flex-shrink:0;
+    color:var(--color-primary);
+    font-weight:900;
+    font-size:14px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    opacity:0;
+    transform:scale(0.5);
+    transition:opacity 0.15s var(--ease-smooth), transform 0.2s var(--ease-spring);
+  }
+  .dd-option.selected .st-check{opacity:1; transform:scale(1);}
+
+  .radio-group{
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:space-between;
+    gap:8px;
+  }
+  .radio-option{
+    flex:1 1 84px;
+    min-width:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:6px;
+    padding:clamp(7px,2.2vw,9px) clamp(3px,1.2vw,5px);
+    border:1.5px solid var(--color-border);
+    border-radius:var(--radius-md);
+    cursor:pointer;
+    font-size:clamp(11px,3.1vw,12.5px);
+    font-weight:700;
+    color:var(--color-text-muted);
+    background:#fbfcfd;
+    transition:border-color 0.2s var(--ease-smooth), background 0.2s var(--ease-smooth),
+               color 0.2s var(--ease-smooth), box-shadow 0.2s var(--ease-smooth),
+               transform 0.12s var(--ease-smooth);
+  }
+  .radio-option:active{transform:scale(0.96);}
+  .radio-option input{accent-color:var(--color-primary); width:13px; height:13px; margin:0;}
+  .radio-option.checked{
+    border-color:var(--color-primary);
+    background:var(--color-primary-soft);
+    color:var(--color-primary-dark);
+    box-shadow:var(--shadow-focus);
+  }
+
+  /* ---------- shift filter chips (records screen) — same visual style as the shift radio-options ---------- */
+  .filter-chip-row{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+    margin-bottom:14px;
+  }
+  .filter-chip-row .radio-option{
+    flex:0 1 auto;
+    padding:clamp(7px,2.2vw,9px) clamp(12px,3.2vw,16px);
+  }
+
+  .field-hint{
+    font-size:11.5px;
+    color:var(--color-text-muted);
+    margin-top:6px;
+  }
+
+  .transfer-field{
+    margin-top:16px;
+  }
+
+  .btn{
+    width:100%;
+    font-family:inherit;
+    font-size:clamp(13.5px,3.8vw,15px);
+    font-weight:800;
+    padding:clamp(12px,3.4vw,14px);
+    border-radius:var(--radius-md);
+    border:none;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+    transition:filter 0.15s var(--ease-smooth), transform 0.12s var(--ease-smooth), box-shadow 0.2s var(--ease-smooth);
+  }
+  .btn:active{transform:scale(0.98);}
+  .btn-save{
+    background:linear-gradient(155deg, var(--color-primary-light) 0%, var(--color-primary) 55%, var(--color-primary-dark) 100%);
+    color:#fff;
+    margin-top:22px;
+    box-shadow:0 8px 20px rgba(22,50,79,0.28);
+  }
+  .btn-save:hover{filter:brightness(1.06);}
+  .btn-save:active{box-shadow:0 4px 10px rgba(22,50,79,0.24);}
+  .btn-save:disabled{opacity:0.6; cursor:not-allowed; box-shadow:none;}
+
+  .footer-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    margin-top:16px;
+    flex-wrap:wrap;
+  }
+  .btn-export{
+    flex:1;
+    min-width:150px;
+    background:#fff;
+    color:var(--color-accent-gold);
+    border:1.5px solid var(--color-accent-gold);
+    font-size:clamp(12px,3.4vw,13.5px);
+    padding:clamp(9px,2.6vw,11px) clamp(8px,2.4vw,10px);
+  }
+  .btn-export:hover{background:var(--color-accent-gold-soft);}
+  .count-pill{
+    font-size:12px;
+    font-weight:700;
+    color:var(--color-text-muted);
+    white-space:nowrap;
+  }
+  .count-pill b{color:var(--color-primary-dark); font-size:14px;}
+
+  .export-note{
+    font-size:11px;
+    color:var(--color-text-muted);
+    text-align:center;
+    margin-top:10px;
+    line-height:1.6;
+  }
+
+  .toast{
+    position:fixed;
+    bottom:calc(84px + env(safe-area-inset-bottom));
+    left:50%;
+    transform:translateX(-50%) translateY(16px) scale(0.96);
+    background:var(--color-primary-dark);
+    color:#fff;
+    font-size:13.5px;
+    font-weight:700;
+    padding:13px 24px;
+    border-radius:999px;
+    box-shadow:0 10px 28px rgba(22,50,79,0.35);
+    opacity:0;
+    pointer-events:none;
+    transition:opacity 0.28s var(--ease-smooth), transform 0.28s var(--ease-spring);
+    z-index:90;
+    white-space:nowrap;
+    max-width:90vw;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+  .toast.show{
+    opacity:1;
+    transform:translateX(-50%) translateY(0) scale(1);
+  }
+
+  /* ---------- success micro-interaction (brief checkmark burst after saving) ---------- */
+  .success-burst{
+    position:fixed;
+    inset:0;
+    z-index:500;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:14px;
+    background:rgba(10,16,24,0);
+    pointer-events:none;
+    opacity:0;
+    transition:opacity 0.25s var(--ease-smooth), background 0.25s var(--ease-smooth);
+  }
+  .success-burst.show{
+    opacity:1;
+    background:rgba(10,16,24,0.28);
+  }
+  .success-burst-circle{
+    width:78px;
+    height:78px;
+    border-radius:50%;
+    background:linear-gradient(150deg, var(--color-primary-light) 0%, var(--color-primary) 60%, var(--color-primary-dark) 100%);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    box-shadow:0 14px 32px rgba(22,50,79,0.35);
+    transform:scale(0.5);
+    transition:transform 0.4s var(--ease-spring);
+  }
+  .success-burst.show .success-burst-circle{transform:scale(1);}
+  .success-burst-circle svg{width:38px; height:38px;}
+  .success-burst-check{
+    stroke-dasharray:24;
+    stroke-dashoffset:24;
+    transition:stroke-dashoffset 0.35s var(--ease-out) 0.15s;
+  }
+  .success-burst.show .success-burst-check{stroke-dashoffset:0;}
+  .success-burst-text{
+    color:#fff;
+    font-size:14px;
+    font-weight:800;
+    opacity:0;
+    transform:translateY(4px);
+    transition:opacity 0.3s var(--ease-smooth) 0.2s, transform 0.3s var(--ease-smooth) 0.2s;
+  }
+  .success-burst.show .success-burst-text{opacity:1; transform:translateY(0);}
+
+  /* ---------- guaranteed export preview overlay (works even when native download/share fails inside a wrapped APK) ---------- */
+  .export-preview-overlay{
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(10,16,24,0.94);
+    backdrop-filter:blur(4px);
+    z-index:400;
+    flex-direction:column;
+    opacity:0;
+    transition:opacity 0.2s var(--ease-smooth);
+  }
+  .export-preview-overlay.show{display:flex;}
+  .export-preview-overlay.show.in{opacity:1;}
+  .export-preview-head{
+    flex-shrink:0;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:14px 16px;
+    color:#fff;
+  }
+  .export-preview-head h2{margin:0; font-size:15px; font-weight:800;}
+  .export-preview-close{
+    background:rgba(255,255,255,0.14);
+    border:none;
+    color:#fff;
+    width:32px;
+    height:32px;
+    border-radius:50%;
+    font-size:15px;
+    cursor:pointer;
+    flex-shrink:0;
+  }
+  .export-preview-body{
+    flex:1;
+    min-height:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:8px 14px;
+    overflow:auto;
+  }
+  .export-preview-body img{
+    max-width:100%;
+    max-height:100%;
+    border-radius:10px;
+    box-shadow:0 10px 30px rgba(0,0,0,0.4);
+  }
+  .export-preview-body textarea{
+    width:100%;
+    height:100%;
+    min-height:280px;
+    resize:none;
+    font-family:'Courier New', monospace;
+    font-size:12.5px;
+    direction:ltr;
+    text-align:left;
+    padding:14px;
+    border-radius:10px;
+    border:none;
+    background:#fff;
+    color:#1f2a22;
+  }
+  .export-preview-foot{
+    flex-shrink:0;
+    padding:14px 16px 22px;
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+  }
+  .export-preview-hint{
+    color:rgba(255,255,255,0.82);
+    font-size:12.5px;
+    text-align:center;
+    line-height:1.7;
+  }
+  .export-preview-actions{
+    display:flex;
+    gap:10px;
+  }
+  .export-preview-actions .btn{
+    flex:1;
+    margin:0;
+  }
+  .btn-preview-secondary{
+    background:rgba(255,255,255,0.14);
+    color:#fff;
+  }
+
+  /* ---------- group switcher (top of registration form) ---------- */
+  .group-switch-card{
+    background:var(--color-card);
+    border:1px solid var(--color-border);
+    border-radius:var(--radius-lg);
+    padding:clamp(12px,3.6vw,14px) clamp(12px,3.6vw,14px) clamp(13px,4vw,16px);
+    box-shadow:var(--shadow-card);
+    margin-bottom:14px;
+  }
+  .group-switch-label{
+    font-size:clamp(11.5px,3.1vw,12.5px);
+    font-weight:700;
+    color:var(--color-primary-dark);
+    margin-bottom:10px;
+  }
+  .group-switch-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+  }
+  .group-box{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+    text-align:center;
+    padding:clamp(12px,3.6vw,16px) clamp(6px,2vw,8px);
+    border-radius:var(--radius-md);
+    border:1.5px solid var(--color-border);
+    background:#fbfcfd;
+    cursor:pointer;
+    font-family:inherit;
+    min-height:70px;
+    transition:border-color 0.2s var(--ease-smooth), background 0.2s var(--ease-smooth),
+               transform 0.12s var(--ease-smooth), box-shadow 0.2s var(--ease-smooth);
+  }
+  .group-box:active{transform:scale(0.97);}
+  .group-box-check{
+    width:20px;
+    height:20px;
+    border-radius:50%;
+    border:1.5px solid var(--color-border);
+    background:#fff;
+    flex-shrink:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:#fff;
+    font-size:11px;
+    font-weight:900;
+  }
+  .group-box-title{
+    font-size:clamp(12px,3.4vw,13px);
+    font-weight:800;
+    color:var(--color-text);
+    line-height:1.35;
+  }
+  .group-box.active{
+    border-color:var(--color-primary);
+    background:var(--color-primary-soft);
+    box-shadow:var(--shadow-focus);
+  }
+  .group-box.active .group-box-title{color:var(--color-primary-dark);}
+  .group-box.active .group-box-check{
+    border-color:var(--color-primary);
+    background:var(--color-primary);
+  }
+
+  /* ---------- small sub-tabs (group filter on records / stats screens) ---------- */
+  .subtabs{
+    display:flex;
+    gap:8px;
+    margin-bottom:14px;
+    flex-wrap:wrap;
+  }
+  .subtab-btn{
+    flex:1;
+    min-width:88px;
+    border:1.5px solid var(--color-border);
+    background:#fff;
+    color:var(--color-text-muted);
+    font-family:inherit;
+    font-weight:800;
+    font-size:12px;
+    padding:9px 6px;
+    border-radius:999px;
+    cursor:pointer;
+    transition:border-color 0.2s var(--ease-smooth), background 0.2s var(--ease-smooth), color 0.2s var(--ease-smooth), transform 0.12s var(--ease-smooth);
+  }
+  .subtab-btn:active{transform:scale(0.96);}
+  .subtab-btn.active{
+    background:var(--color-primary);
+    border-color:var(--color-primary);
+    color:#fff;
+    box-shadow:0 4px 12px rgba(22,50,79,0.24);
+  }
+  .tag-chip.group-tag{
+    background:var(--color-accent-gold-soft);
+    color:var(--color-accent-gold);
+    font-weight:800;
+  }
+
+  /* Stats screen */
+  .stat-grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:10px;
+    margin-bottom:16px;
+  }
+  .stat-tile{
+    background:var(--color-card);
+    border:1px solid var(--color-border);
+    border-radius:var(--radius-md);
+    padding:14px 12px;
+    box-shadow:var(--shadow-card);
+    transition:transform 0.15s var(--ease-smooth);
+  }
+  .stat-tile.total{
+    grid-column:1 / -1;
+    background:linear-gradient(150deg, var(--color-primary-light) 0%, var(--color-primary) 55%, var(--color-primary-dark) 100%);
+    color:#fff;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    box-shadow:0 8px 20px rgba(22,50,79,0.24);
+  }
+  .stat-tile.total .stat-num{color:#fff; font-size:32px;}
+  .stat-tile.total .stat-label{color:rgba(255,255,255,0.85);}
+  .stat-num{
+    font-size:24px;
+    font-weight:900;
+    color:var(--color-primary-dark);
+    line-height:1.1;
+  }
+  .stat-label{
+    font-size:12px;
+    font-weight:600;
+    color:var(--color-text-muted);
+    margin-top:4px;
+  }
+  .stat-tile.healed .stat-num{color:var(--color-primary);}
+  .stat-tile.transfer .stat-num{color:var(--color-transfer);}
+  .stat-tile.rejected .stat-num{color:var(--color-danger);}
+
+  .status-grid{
+    grid-template-columns:repeat(3,1fr);
+    gap:8px;
+  }
+  .status-grid .status-square{
+    aspect-ratio:1/1.05;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    padding:8px 6px;
+  }
+  .status-grid .status-square .stat-num{font-size:22px;}
+  .status-grid .status-square .stat-label{margin-top:5px;}
+  .status-square-pct{
+    margin-top:6px;
+    font-size:11px;
+    font-weight:800;
+    color:#fff;
+    padding:2px 9px;
+    border-radius:999px;
+  }
+
+  .donut-card{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:18px;
+    padding:22px 18px;
+  }
+  .donut-chart-holder{
+    position:relative;
+    flex-shrink:0;
+    line-height:0;
+  }
+  .donut-center{
+    position:absolute;
+    inset:0;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+  }
+  .donut-center-num{
+    font-size:28px;
+    font-weight:900;
+    color:var(--color-primary-dark);
+    line-height:1.1;
+  }
+  .donut-center-label{
+    font-size:11px;
+    font-weight:700;
+    color:var(--color-text-muted);
+    margin-top:2px;
+  }
+  .donut-legend{
+    display:flex;
+    flex-direction:column;
+    gap:11px;
+    width:100%;
+  }
+  .donut-legend-row{
+    display:flex;
+    align-items:center;
+    gap:9px;
+    font-size:13.5px;
+  }
+  .donut-legend-dot{
+    width:12px;
+    height:12px;
+    border-radius:50%;
+    flex-shrink:0;
+  }
+  .donut-legend-label{
+    flex:1;
+    font-weight:700;
+    color:var(--color-text);
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+  }
+  .donut-legend-value{
+    font-weight:800;
+    color:var(--color-primary-dark);
+    white-space:nowrap;
+    min-width:22px;
+    text-align:center;
+  }
+  .donut-legend-pct{
+    font-weight:800;
+    font-size:12px;
+    color:#fff;
+    padding:3px 9px;
+    border-radius:999px;
+    min-width:46px;
+    text-align:center;
+    white-space:nowrap;
+    flex-shrink:0;
+  }
+
+  .section-title{
+    font-size:14px;
+    font-weight:800;
+    color:var(--color-primary-dark);
+    margin:22px 0 10px;
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  .section-title::before{
+    content:"";
+    width:4px;
+    height:15px;
+    background:var(--color-accent-gold);
+    border-radius:3px;
+    display:inline-block;
+  }
+
+  .bar-list{
+    background:var(--color-card);
+    border:1px solid var(--color-border);
+    border-radius:var(--radius-lg);
+    padding:14px 16px;
+    box-shadow:var(--shadow-card);
+  }
+  .bar-row{margin-bottom:14px;}
+  .bar-row:last-child{margin-bottom:0;}
+  .bar-row-top{
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    margin-bottom:6px;
+    gap:10px;
+  }
+  .bar-row-name{
+    font-size:13.5px;
+    font-weight:700;
+    color:var(--color-text);
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+  }
+  .bar-row-count{
+    font-size:13px;
+    font-weight:800;
+    color:var(--color-primary-dark);
+    flex-shrink:0;
+  }
+  .bar-track{
+    height:8px;
+    background:var(--color-primary-soft);
+    border-radius:99px;
+    overflow:hidden;
+  }
+  .bar-fill{
+    height:100%;
+    background:linear-gradient(90deg, var(--color-primary) 0%, var(--color-accent-gold) 100%);
+    border-radius:99px;
+    transition:width 0.4s ease;
+  }
+
+  .empty-state{
+    text-align:center;
+    padding:40px 20px;
+    color:var(--color-text-muted);
+  }
+  .empty-state .emoji{font-size:34px; margin-bottom:10px;}
+  .empty-state p{font-size:13.5px; margin:0; line-height:1.7;}
+
+  .stats-refresh-row{
+    display:flex;
+    justify-content:flex-end;
+    margin-bottom:10px;
+  }
+  .btn-refresh{
+    background:transparent;
+    border:none;
+    color:var(--color-primary-dark);
+    font-family:inherit;
+    font-size:12.5px;
+    font-weight:700;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    gap:5px;
+    padding:6px 4px;
+  }
+
+  .loading-row{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:30px;
+    color:var(--color-text-muted);
+    font-size:13px;
+    gap:8px;
+  }
+  .spinner{
+    width:15px; height:15px;
+    border:2px solid var(--color-border);
+    border-top-color:var(--color-primary);
+    border-radius:50%;
+    animation:spin 0.7s linear infinite;
+  }
+  @keyframes spin{to{transform:rotate(360deg);}}
+
+  /* Records screen */
+  .records-count-pill{
+    font-size:12.5px;
+    font-weight:700;
+    color:var(--color-text-muted);
+  }
+  .records-count-pill b{color:var(--color-primary-dark); font-size:14px;}
+
+  .record-card{
+    background:var(--color-card);
+    border:1px solid var(--color-border);
+    border-radius:var(--radius-lg);
+    padding:16px;
+    box-shadow:var(--shadow-card);
+    margin-bottom:12px;
+    transition:box-shadow 0.2s var(--ease-smooth);
+  }
+  .record-top{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    margin-bottom:8px;
+  }
+  .record-name-wrap{
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  .record-name{
+    font-size:15px;
+    font-weight:800;
+    color:var(--color-text);
+  }
+  .record-badge{
+    font-size:11px;
+    font-weight:800;
+    color:var(--color-primary-dark);
+    background:var(--color-primary-soft);
+    padding:3px 9px;
+    border-radius:999px;
+    flex-shrink:0;
+  }
+  .record-date{
+    font-size:12px;
+    font-weight:600;
+    color:var(--color-text-muted);
+    flex-shrink:0;
+  }
+  .record-diagnosis{
+    font-size:13.5px;
+    color:var(--color-text-muted);
+    margin-bottom:12px;
+    line-height:1.6;
+  }
+  .record-diagnosis b{color:var(--color-text); font-weight:700;}
+  .record-tags{
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+    margin-bottom:14px;
+  }
+  .tag-chip{
+    font-size:12px;
+    font-weight:700;
+    padding:5px 12px;
+    border-radius:999px;
+    border:1.5px solid var(--color-border);
+    color:var(--color-text-muted);
+    background:#fbfcfd;
+  }
+  .tag-chip.status-healed{border-color:var(--color-primary); color:var(--color-primary-dark); background:var(--color-primary-soft);}
+  .tag-chip.status-transfer{border-color:var(--color-transfer); color:var(--color-transfer); background:var(--color-transfer-soft);}
+  .tag-chip.status-rejected{border-color:var(--color-danger); color:var(--color-danger); background:var(--color-danger-soft);}
+
+  .record-actions{
+    display:flex;
+    gap:10px;
+  }
+  .btn-small{
+    flex:1;
+    font-family:inherit;
+    font-size:13px;
+    font-weight:800;
+    padding:10px;
+    border-radius:var(--radius-md);
+    border:1.5px solid;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:6px;
+    background:#fff;
+    transition:filter 0.15s var(--ease-smooth), transform 0.12s var(--ease-smooth);
+  }
+  .btn-small:active{transform:scale(0.97);}
+  .btn-delete{border-color:var(--color-danger); color:var(--color-danger);}
+  .btn-delete:hover{background:var(--color-danger-soft);}
+  .btn-edit{border-color:var(--color-primary); color:var(--color-primary-dark);}
+  .btn-edit:hover{background:var(--color-primary-soft);}
+
+  .edit-banner{
+    display:none;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    background:var(--color-accent-gold-soft);
+    border:1.5px solid var(--color-accent-gold);
+    color:#7a5c14;
+    font-size:12.5px;
+    font-weight:700;
+    padding:10px 14px;
+    border-radius:var(--radius-md);
+    margin-bottom:16px;
+  }
+  .edit-banner button{
+    background:transparent;
+    border:none;
+    color:#7a5c14;
+    font-weight:800;
+    font-size:12.5px;
+    cursor:pointer;
+    text-decoration:underline;
+    font-family:inherit;
+    padding:0;
+  }
+
+  /* Hidden admin panel (field options) */
+  .admin-overlay{
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(10,16,24,0.6);
+    backdrop-filter:blur(3px);
+    z-index:200;
+    align-items:flex-end;
+    justify-content:center;
+  }
+  .admin-overlay.show{display:flex;}
+  .admin-panel{
+    width:100%;
+    max-width:520px;
+    max-height:88vh;
+    background:var(--color-bg);
+    border-radius:22px 22px 0 0;
+    display:flex;
+    flex-direction:column;
+    overflow:hidden;
+    box-shadow:0 -12px 40px rgba(22,50,79,0.28);
+    animation:admin-slide-up 0.26s var(--ease-out);
+  }
+  @keyframes admin-slide-up{
+    from{transform:translateY(28px); opacity:0;}
+    to{transform:translateY(0); opacity:1;}
+  }
+  /* backup panel: centered pop-in modal instead of the shared bottom-sheet style */
+  #backupOverlay{align-items:center; padding:20px;}
+  #backupOverlay .admin-panel{
+    max-height:85vh;
+    border-radius:22px;
+    box-shadow:0 20px 60px rgba(22,50,79,0.35);
+    animation:backup-pop-in 0.24s var(--ease-out);
+  }
+  @keyframes backup-pop-in{
+    from{transform:scale(0.94) translateY(10px); opacity:0;}
+    to{transform:scale(1) translateY(0); opacity:1;}
+  }
+  .admin-header{
+    background:linear-gradient(155deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+    color:#fff;
+    padding:16px 18px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    flex-shrink:0;
+  }
+  .admin-header h2{
+    margin:0;
+    font-size:16px;
+    font-weight:800;
+  }
+  .admin-close{
+    background:rgba(255,255,255,0.16);
+    border:none;
+    color:#fff;
+    width:30px;
+    height:30px;
+    border-radius:50%;
+    font-size:14px;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  .admin-body{
+    flex:1;
+    overflow-y:auto;
+    padding:16px 18px 6px;
+  }
+  .admin-section{
+    background:var(--color-card);
+    border:1px solid var(--color-border);
+    border-radius:var(--radius-md);
+    padding:14px;
+    margin-bottom:14px;
+  }
+  .admin-section-title{
+    font-size:13px;
+    font-weight:800;
+    color:var(--color-primary-dark);
+    margin-bottom:10px;
+  }
+  .admin-section-title-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:8px;
+    margin-bottom:10px;
+  }
+  .admin-section-title-row .admin-section-title{margin-bottom:0;}
+  .admin-reset-btn{
+    flex-shrink:0;
+    font-family:inherit;
+    font-size:11px;
+    font-weight:700;
+    color:var(--color-primary);
+    background:var(--color-primary-soft);
+    border:1px solid var(--color-border);
+    border-radius:999px;
+    padding:5px 10px;
+    cursor:pointer;
+    white-space:nowrap;
+  }
+  .admin-reset-btn:active{transform:scale(0.96);}
+  .admin-chip-list{
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+    margin-bottom:12px;
+    min-height:24px;
+    max-height:216px;
+    overflow-y:auto;
+    -webkit-overflow-scrolling:touch;
+    overscroll-behavior:contain;
+    padding-right:3px;
+  }
+  .admin-empty-hint{
+    font-size:12px;
+    color:var(--color-text-muted);
+  }
+  .admin-option-row{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    font-size:12.5px;
+    font-weight:700;
+    color:var(--color-primary-dark);
+    background:var(--color-primary-soft);
+    border:1px solid var(--color-border);
+    padding:7px 8px 7px 12px;
+    border-radius:var(--radius-sm);
+  }
+  .admin-option-order{
+    width:20px;
+    height:20px;
+    border-radius:50%;
+    background:#fff;
+    color:var(--color-primary-dark);
+    font-size:10.5px;
+    font-weight:800;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-shrink:0;
+  }
+  .admin-option-text{
+    flex:1;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+  }
+  .admin-option-text-input{
+    flex:1;
+    min-width:0;
+    font-family:inherit;
+    font-size:12.5px;
+    font-weight:700;
+    color:var(--color-primary-dark);
+    background:#fff;
+    border:1.5px solid transparent;
+    border-radius:6px;
+    padding:5px 7px;
+    outline:none;
+    transition:border-color 0.18s var(--ease-smooth);
+  }
+  .admin-option-text-input:focus{
+    border-color:var(--color-primary);
+    box-shadow:var(--shadow-focus);
+  }
+  .admin-option-actions{
+    display:flex;
+    align-items:center;
+    gap:5px;
+    flex-shrink:0;
+  }
+  .admin-move-btn,
+  .admin-remove-btn{
+    background:#fff;
+    border:1px solid var(--color-border);
+    color:var(--color-primary-dark);
+    width:24px;
+    height:24px;
+    border-radius:7px;
+    font-size:11px;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-shrink:0;
+    padding:0;
+  }
+  .admin-move-btn:disabled{
+    opacity:0.3;
+    cursor:not-allowed;
+  }
+  .admin-remove-btn{
+    border-color:var(--color-danger);
+    color:var(--color-danger);
+  }
+  .admin-add-row{
+    display:flex;
+    gap:8px;
+  }
+  .admin-add-row input{
+    flex:1;
+    font-family:inherit;
+    font-size:13px;
+    border:1.5px solid var(--color-border);
+    border-radius:var(--radius-sm);
+    padding:9px 10px;
+    outline:none;
+    background:#fbfcfd;
+  }
+  .admin-add-row input:focus{border-color:var(--color-primary); background:#fff;}
+  .admin-add-btn{
+    background:var(--color-primary);
+    color:#fff;
+    border:none;
+    border-radius:var(--radius-sm);
+    padding:0 16px;
+    font-family:inherit;
+    font-size:12.5px;
+    font-weight:800;
+    cursor:pointer;
+  }
+  .admin-footer{
+    padding:12px 18px 18px;
+    flex-shrink:0;
+    background:var(--color-bg);
+    border-top:1px solid var(--color-border);
+  }
+  .admin-footer .btn-save{margin-top:0;}
+
+  .admin-group-name-list{
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+  }
+  .admin-group-name-row{
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+  }
+  .admin-group-name-label{
+    font-size:11.5px;
+    font-weight:700;
+    color:var(--color-text-muted);
+  }
+  .admin-group-name-label b{color:var(--color-primary-dark);}
+  .admin-group-name-row input{
+    width:100%;
+    font-family:inherit;
+    font-size:13.5px;
+    font-weight:700;
+    color:var(--color-text);
+    border:1.5px solid var(--color-border);
+    border-radius:var(--radius-sm);
+    padding:10px 11px;
+    outline:none;
+    background:#fbfcfd;
+  }
+  .admin-group-name-row input:focus{border-color:var(--color-primary); background:#fff;}
+
+  /* ---------- lock screen (basic passcode gate — keeps the app private-by-link) ---------- */
+  .lock-screen{
+    position:fixed;
+    inset:0;
+    z-index:1000;
+    background:linear-gradient(160deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    padding:24px;
+  }
+  .lock-brand{
+    width:100%;
+    max-width:300px;
+    margin-bottom:18px;
+    text-align:center;
+    font-family:'Tajawal', 'Segoe UI', sans-serif;
+    font-size:16.5px;
+    font-weight:900;
+    color:#ffffff;
+    letter-spacing:0.3px;
+    line-height:1.5;
+    text-shadow:0 2px 10px rgba(0,0,0,0.18);
+    opacity:0;
+    animation:lock-brand-in 0.7s var(--ease-out) 0.1s forwards;
+  }
+  .lock-card{
+    width:100%;
+    max-width:300px;
+    background:rgba(255,255,255,0.98);
+    border-radius:var(--radius-lg);
+    padding:26px 22px 22px;
+    box-shadow:0 20px 50px rgba(0,0,0,0.3);
+    text-align:center;
+    opacity:0;
+    animation:lock-card-in 0.7s var(--ease-out) 0.28s forwards;
+  }
+  @keyframes lock-brand-in{
+    0%{opacity:0; transform:translateY(-14px);}
+    100%{opacity:1; transform:translateY(0);}
+  }
+  @keyframes lock-card-in{
+    0%{opacity:0; transform:translateY(16px) scale(0.97);}
+    100%{opacity:1; transform:translateY(0) scale(1);}
+  }
+  @media (prefers-reduced-motion: reduce){
+    .lock-brand, .lock-card{animation:none; opacity:1;}
+  }
+  .lock-icon{
+    width:48px;
+    height:48px;
+    border-radius:50%;
+    background:var(--color-primary-soft);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    margin:0 auto 16px;
+  }
+  .lock-icon svg{width:22px; height:22px; color:var(--color-primary-dark);}
+  .lock-card h2{
+    margin:0 0 6px;
+    font-size:16.5px;
+    font-weight:900;
+    color:var(--color-text);
+  }
+  .lock-card p{
+    margin:0 0 20px;
+    font-size:12.5px;
+    color:var(--color-text-muted);
+    line-height:1.7;
+  }
+  .lock-input{
+    width:100%;
+    font-family:inherit;
+    font-size:20px;
+    font-weight:800;
+    letter-spacing:8px;
+    text-align:center;
+    color:var(--color-text);
+    border:1.5px solid var(--color-border);
+    border-radius:var(--radius-md);
+    padding:13px;
+    outline:none;
+    background:#fbfcfd;
+    transition:border-color 0.18s var(--ease-smooth), box-shadow 0.18s var(--ease-smooth);
+  }
+  .lock-input:focus{border-color:var(--color-primary); box-shadow:var(--shadow-focus);}
+  .lock-card.shake{animation:lock-shake 0.4s;}
+  @keyframes lock-shake{
+    0%,100%{transform:translateX(0);}
+    20%{transform:translateX(-8px);}
+    40%{transform:translateX(8px);}
+    60%{transform:translateX(-6px);}
+    80%{transform:translateX(6px);}
+  }
+  .lock-error{
+    color:var(--color-danger);
+    font-size:12px;
+    font-weight:700;
+    margin-top:10px;
+    min-height:16px;
+  }
+  .lock-btn{
+    width:100%;
+    margin-top:16px;
+    font-family:inherit;
+    font-size:14px;
+    font-weight:800;
+    color:#fff;
+    background:linear-gradient(155deg, var(--color-primary-light) 0%, var(--color-primary) 55%, var(--color-primary-dark) 100%);
+    border:none;
+    border-radius:var(--radius-md);
+    padding:12px;
+    cursor:pointer;
+    transition:transform 0.12s var(--ease-smooth);
+  }
+  .lock-btn:active{transform:scale(0.98);}
+  .lock-screen{display:none;}
+  body.locked .lock-screen{display:flex;}
+  body.locked .app{display:none;}
+</style>
+</head>
+<body>
+<script>
+  // Show the passcode gate before anything else paints, so there is no
+  // flash of the real app for a device that hasn't unlocked it yet.
+  (function(){
+    // Uses sessionStorage (not localStorage) on purpose: the passcode should be
+    // asked again every time the browser/app is opened fresh, and only stay
+    // unlocked while this browser tab/session is still open.
+    try{
+      if(sessionStorage.getItem('app-unlocked') !== '1') document.body.classList.add('locked');
+    }catch(e){ document.body.classList.add('locked'); }
+  })();
+</script>
+
+<div class="lock-screen" id="lockScreen">
+  <div class="lock-brand">منظمة آمنون للإغاثة والتنمية</div>
+  <div class="lock-card" id="lockCard">
+    <div class="lock-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+    </div>
+    <h2>الدخول محدود</h2>
+    <p>هذا التطبيق خاص بفريق العمل. أدخلي رمز الدخول للمتابعة</p>
+    <input type="password" inputmode="numeric" maxlength="8" class="lock-input" id="lockInput" placeholder="••••">
+    <div class="lock-error" id="lockError"></div>
+    <button type="button" class="lock-btn" onclick="tryUnlock()">دخول</button>
+  </div>
+</div>
+
+<div class="app">
+  <div class="header">
+    <div class="header-row">
+      <div class="header-titles">
+        <h1>سجل الحالات الاسعافية</h1>
+        <p>منظمة آمنون للإغاثة والتنمية</p>
+      </div>
+      <button type="button" class="install-badge" id="installBadge">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0l-4-4m4 4l4-4M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>
+        <span>تثبيت</span>
+      </button>
+      <div style="display:flex; flex-direction:column; align-items:center; gap:8px; flex-shrink:0;">
+        <button type="button" id="backupIconBtn" onclick="openBackupPanel()" title="النسخ الاحتياطي على Google Drive" style="width:34px;height:34px;border-radius:50%;border:2px solid rgba(255,255,255,0.5);background:rgba(255,255,255,0.12);display:flex;align-items:center;justify-content:center;padding:0;cursor:pointer;overflow:hidden;">
+          <img id="backupIconPic" src="" alt="" style="width:100%;height:100%;object-fit:cover;display:none;">
+          <svg id="backupIconDefault" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><path d="M19.35 10.04A7.49 7.49 0 0 0 12 4C9.11 4 6.6 5.64 5.35 8.04A5.5 5.5 0 0 0 6 19h13a4 4 0 0 0 .35-8.96z"/></svg>
+        </button>
+        <div class="header-badge" id="headerBadge" style="margin-top:4px;"><span></span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="body" id="appBody">
+
+    <!-- SCREEN 1: FORM -->
+    <div class="screen active" id="screen-form">
+      <div class="edit-banner" id="editBanner">
+        <span>تعديل الحالة رقم <b id="editBannerNum"></b></span>
+        <button onclick="cancelEdit()">إلغاء التعديل</button>
+      </div>
+
+      <div class="group-switch-card">
+        <div class="group-switch-label">المجموعة</div>
+        <div class="group-switch-grid" id="groupSwitchGrid">
+          <button type="button" class="group-box" data-group="disaster" onclick="selectGroup('disaster')">
+            <span class="group-box-check">✓</span>
+            <span class="group-box-title">مجموعة إدارة الكوارث</span>
+          </button>
+          <button type="button" class="group-box" data-group="safir" onclick="selectGroup('safir')">
+            <span class="group-box-check">✓</span>
+            <span class="group-box-title">مجموعة السفير</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="field">
+          <label class="field-label">الاسم</label>
+          <input type="text" id="f-name" placeholder="اسم المصاب / المريض">
+        </div>
+
+        <div class="field">
+          <label class="field-label">الجنسية</label>
+          <select id="f-nationality"></select>
+        </div>
+
+        <div class="field">
+          <label class="field-label">العمر</label>
+          <input type="number" id="f-age" inputmode="numeric" placeholder="العمر " min="0" max="130">
+        </div>
+
+        <div class="field">
+          <label class="field-label">الجنس</label>
+          <div class="radio-group" id="genderGroup"></div>
+        </div>
+
+        <div class="field">
+          <label class="field-label">التشخيص</label>
+          <select id="f-diagnosis"></select>
+        </div>
+
+        <div class="field">
+          <label class="field-label">الحالة</label>
+          <div class="radio-group" id="statusGroup"></div>
+
+          <div class="transfer-field" id="transferField">
+            <input type="text" id="f-transfer-location" placeholder="مكان النقل (إن وجد)">
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="field-label">رمز الفريق / النقطة</label>
+          <div class="combo-input-wrap">
+            <input type="text" id="f-team-code" placeholder="اكتب رمز الفريق أو اختر من القائمة">
+            <button type="button" class="combo-arrow-btn" id="f-team-code-arrow" title="عرض الاختيارات المحفوظة">
+              <span class="st-chevron"></span>
+            </button>
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="field-label">الشفت</label>
+          <div class="radio-group" id="shiftGroup"></div>
+        </div>
+
+        <div class="field">
+          <label class="field-label">التاريخ</label>
+          <input type="date" id="f-date">
+        </div>
+
+        <button class="btn btn-save" id="saveBtn" onclick="saveCase()">
+          حفظ الحالة ✓
+        </button>
+      </div>
+
+      <div class="footer-row">
+        <button class="btn btn-export" onclick="exportCsv()">تصدير ومشاركة ⇪</button>
+        <div class="count-pill">عدد السجلات المحفوظة: <b id="savedCount">0</b></div>
+      </div>
+      <div class="export-note">تُحفظ السجلات محلياً داخل هذا الهاتف فقط (بدون إنترنت)، ويمكن تصديرها كملف Excel (CSV) ومشاركتها مع المسؤول.</div>
+    </div>
+
+    <!-- SCREEN 2: RECORDS -->
+    <div class="screen" id="screen-records">
+      <div class="subtabs" id="recordsGroupTabs">
+        <button type="button" class="subtab-btn" data-group="all" onclick="setRecordsGroupFilter('all')">الكل</button>
+        <button type="button" class="subtab-btn" data-group="disaster" onclick="setRecordsGroupFilter('disaster')">إدارة الكوارث</button>
+        <button type="button" class="subtab-btn" data-group="safir" onclick="setRecordsGroupFilter('safir')">السفير</button>
+      </div>
+      <div class="filter-chip-row" id="recordsShiftFilter"></div>
+      <div class="stats-refresh-row" style="justify-content:space-between;">
+        <span class="records-count-pill">عدد السجلات: <b id="recordsCount">0</b></span>
+        <button class="btn-refresh" onclick="loadAndRenderRecords()">↻ تحديث</button>
+      </div>
+      <div id="recordsContent">
+        <div class="loading-row"><div class="spinner"></div> جارِ تحميل السجلات...</div>
+      </div>
+    </div>
+
+    <!-- SCREEN 3: STATS -->
+    <div class="screen" id="screen-stats">
+      <div class="subtabs" id="statsGroupTabs">
+        <button type="button" class="subtab-btn" data-group="all" onclick="setStatsGroupFilter('all')">الكل</button>
+        <button type="button" class="subtab-btn" data-group="disaster" onclick="setStatsGroupFilter('disaster')">إدارة الكوارث</button>
+        <button type="button" class="subtab-btn" data-group="safir" onclick="setStatsGroupFilter('safir')">السفير</button>
+      </div>
+      <div class="stats-refresh-row">
+        <button class="btn-refresh" onclick="loadAndRenderStats()">↻ تحديث</button>
+      </div>
+      <div id="statsContent">
+        <div class="loading-row"><div class="spinner"></div> جارِ تحميل البيانات...</div>
+      </div>
+      <button class="btn btn-export" style="margin-top:16px;" onclick="exportStatsReport()">تصدير تقرير الإحصائيات ⇪</button>
+      <button class="btn btn-export" style="margin-top:10px;" onclick="exportStatsReportPdf()">تصدير نسخة PDF احتياطية 📄</button>
+      <button class="btn btn-export" id="resetStatsBtn" style="margin-top:10px; color:var(--color-danger); border-color:var(--color-danger);" onclick="resetStats()">تصفير الإحصائيات 🗑</button>
+    </div>
+
+  </div>
+
+  <nav class="bottom-nav" id="bottomNav">
+    <div class="tab-indicator" id="tabIndicator"></div>
+    <button class="tab-btn active" id="tabFormBtn" onclick="switchTab('form')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+      <span>تسجيل حالة</span>
+    </button>
+    <button class="tab-btn" id="tabRecordsBtn" onclick="switchTab('records')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h16M4 18h10"/></svg>
+      <span>السجلات</span>
+    </button>
+    <button class="tab-btn" id="tabStatsBtn" onclick="switchTab('stats')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M12 20V4M20 20v-7"/></svg>
+      <span>الإحصائيات</span>
+    </button>
+  </nav>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<script>
+// ---------- passcode gate ----------
+// This is a simple client-side check, NOT real security — anyone who opens the
+// page source can read APP_PASSCODE. It only stops casual visitors who land on
+// the link without knowing the code; it does not protect against someone who
+// deliberately inspects the page. Change the value below to your own code.
+const APP_PASSCODE = '12';
+
+function tryUnlock(){
+  const input = document.getElementById('lockInput');
+  const val = (input.value || '').trim();
+  if(val === APP_PASSCODE){
+    try{ sessionStorage.setItem('app-unlocked', '1'); }catch(e){ /* ignore */ }
+    document.body.classList.remove('locked');
+  }else{
+    document.getElementById('lockError').textContent = 'رمز غير صحيح، حاولي مرة أخرى';
+    const card = document.getElementById('lockCard');
+    card.classList.remove('shake');
+    void card.offsetWidth;
+    card.classList.add('shake');
+    input.value = '';
+    input.focus();
+    try{ if(navigator.vibrate) navigator.vibrate([40,40,40]); }catch(e){}
+  }
+}
+document.getElementById('lockInput').addEventListener('keydown', (e)=>{
+  if(e.key === 'Enter') tryUnlock();
+});
+
+// ---------- PWA install: show a "تثبيت" button as soon as the browser says the
+// app is installable, so the person doesn't have to hunt for the browser menu.
+// sw.js ملف حقيقي منفصل بجانب index.html، متوافق مع فاحص PWABuilder ومع تغليف Android (TWA).
+if('serviceWorker' in navigator){
+  window.addEventListener('load', ()=>{
+    navigator.serviceWorker.register('./sw.js', { scope: './' }).catch(()=>{ /* best effort only */ });
+  });
+}
+let deferredInstallPrompt = null;
+const installBadgeEl = document.getElementById('installBadge');
+const INSTALLED_FLAG_KEY = 'medcases::app-installed-flag';
+function isRunningInstalled(){
+  return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+}
+function markAppInstalled(){
+  try{ localStorage.setItem(INSTALLED_FLAG_KEY, '1'); }catch(e){ /* ignore */ }
+  deferredInstallPrompt = null;
+  if(installBadgeEl) installBadgeEl.classList.remove('show');
+}
+function wasAppInstalledBefore(){
+  try{ return localStorage.getItem(INSTALLED_FLAG_KEY) === '1'; }catch(e){ return false; }
+}
+function refreshInstallBadgeVisibility(){
+  // Covers cases where the app was installed through the browser's own UI (not our button),
+  // or the "appinstalled" event never fired — re-check whenever the tab regains focus.
+  if(installBadgeEl && (isRunningInstalled() || wasAppInstalledBefore())){
+    installBadgeEl.classList.remove('show');
+    deferredInstallPrompt = null;
+  }
+}
+window.addEventListener('beforeinstallprompt', (e)=>{
+  e.preventDefault();
+  if(isRunningInstalled() || wasAppInstalledBefore()) return;
+  deferredInstallPrompt = e;
+  if(installBadgeEl) installBadgeEl.classList.add('show');
+});
+if(installBadgeEl){
+  installBadgeEl.addEventListener('click', async ()=>{
+    if(!deferredInstallPrompt) return;
+    installBadgeEl.classList.remove('show');
+    deferredInstallPrompt.prompt();
+    try{
+      const choice = await deferredInstallPrompt.userChoice;
+      if(choice && choice.outcome === 'accepted') markAppInstalled();
+    }catch(e){ /* ignore */ }
+    deferredInstallPrompt = null;
+  });
+}
+window.addEventListener('appinstalled', markAppInstalled);
+document.addEventListener('visibilitychange', ()=>{
+  if(document.visibilityState === 'visible') refreshInstallBadgeVisibility();
+});
+window.addEventListener('focus', refreshInstallBadgeVisibility);
+refreshInstallBadgeVisibility();
+
+// ---------- local offline storage (localStorage) — يحفظ داخل هذا الجهاز فقط ----------
+const LS_PREFIX = 'medcases::';
+
+const LocalDB = {
+  get(key){
+    const raw = localStorage.getItem(LS_PREFIX + key);
+    if(raw === null) return null;
+    return {key, value: raw};
+  },
+  set(key, value){
+    localStorage.setItem(LS_PREFIX + key, value);
+    return {key, value};
+  },
+  delete(key){
+    localStorage.removeItem(LS_PREFIX + key);
+    return {key, deleted:true};
+  },
+  list(prefix){
+    const keys = [];
+    const full = LS_PREFIX + (prefix || '');
+    for(let i=0;i<localStorage.length;i++){
+      const k = localStorage.key(i);
+      if(k && k.indexOf(full) === 0){
+        keys.push(k.slice(LS_PREFIX.length));
+      }
+    }
+    return {keys};
+  }
+};
+
+window.storage = {
+  get: async (key)=> LocalDB.get(key),
+  set: async (key, value)=> LocalDB.set(key, value),
+  delete: async (key)=> LocalDB.delete(key),
+  list: async (prefix)=> LocalDB.list(prefix)
+};
+
+// ---------- نسخ احتياطي اختياري إلى Google Drive الشخصي (لكل مستخدم بحسابه) ----------
+// هذي ميزة اختيارية بالكامل: التطبيق يشتغل عادي بدون تفعيلها.
+// المستخدم يضغط زر "مزامنة مع Google Drive" فقط لو يريد، ويربط حسابه هو،
+// وتُحفظ نسخة من بياناته (بجهازه فقط) داخل تطبيق Drive الخاص فيه (Drive > الملف نفسه فقط،
+// ما نقدر نشوف أو نلمس أي ملف ثاني بحسابه — صلاحية drive.file فقط).
+//
+// ⚠️ تفعيل هذي الميزة يحتاج خطوتين لمرة وحدة من صاحب الموقع:
+// 1) الموقع لازم يكون منشور على رابط حقيقي (https)، مو ملف مفتوح من الجهاز مباشرة —
+//    جوجل ما يسمح بربط حسابات من ملف محلي. (أسهل طريقة: Firebase Hosting المجاني،
+//    نفس مشروعك الحالي بفايربيس — قلي إذا تحب أدلّك عليها).
+// 2) أنشئ "OAuth Client ID" من https://console.cloud.google.com (نفس مشروع Firebase)
+//    من قسم APIs & Services > Credentials > Create Credentials > OAuth client ID > Web application
+//    وأضف رابط موقعك ضمن Authorized JavaScript origins، وانسخ الـ Client ID بالأسفل.
+const GOOGLE_DRIVE_CLIENT_ID = "434926719534-l7uj98421k061hfkf62ambcigi5netoq.apps.googleusercontent.com";
+const DRIVE_BACKUP_FILENAME = 'نسخة_احتياطية_سجل_الحالات.json';
+// drive.file: التعامل مع ملف النسخة الاحتياطية فقط. userinfo.email/profile: لعرض اسم/صورة الحساب المسجّل فقط (بدون صلاحيات إضافية على Drive).
+const DRIVE_SCOPE = 'https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile';
+const AUTO_SYNC_INTERVAL_MS = 15 * 60 * 1000; // 15 دقيقة
+
+let driveAccessToken = localStorage.getItem('drive-access-token') || null;
+let driveTokenExpiry = parseInt(localStorage.getItem('drive-token-expiry') || '0', 10);
+let driveFileId = localStorage.getItem('drive-backup-file-id') || null;
+let driveUserInfo = null;
+try{ driveUserInfo = JSON.parse(localStorage.getItem('drive-user-info') || 'null'); }catch(e){ driveUserInfo = null; }
+let driveAutoSyncEnabled = localStorage.getItem('drive-auto-sync') === '1';
+let driveAutoSyncTimer = null;
+let driveTokenClientSingleton = null;
+
+function isDriveSyncConfigured(){
+  return GOOGLE_DRIVE_CLIENT_ID && GOOGLE_DRIVE_CLIENT_ID.indexOf('ضع_') !== 0;
+}
+
+function isDriveTokenValid(){
+  return !!driveAccessToken && Date.now() < (driveTokenExpiry - 60000);
+}
+
+function getDriveTokenClient(callback){
+  if(!driveTokenClientSingleton){
+    driveTokenClientSingleton = google.accounts.oauth2.initTokenClient({
+      client_id: GOOGLE_DRIVE_CLIENT_ID,
+      scope: DRIVE_SCOPE,
+      callback: ()=>{}
+    });
+  }
+  driveTokenClientSingleton.callback = callback;
+  return driveTokenClientSingleton;
+}
+
+// opts: { silentOnly: bool -> ما يفتح شاشة تسجيل دخول لو فشلت المحاولة الصامتة (تستخدم بالحفظ التلقائي بالخلفية)
+//         onFail: دالة تُستدعى لو فشل الحصول على صلاحية }
+function requestDriveAccess(callback, opts={}){
+  if(!navigator.onLine){
+    if(!opts.silentOnly) showToast('لا يوجد اتصال بالإنترنت الآن — البيانات محفوظة بجهازك وستُرفع تلقائيًا عند عودة الاتصال');
+    if(opts.onFail) opts.onFail();
+    return;
+  }
+  if(!isDriveSyncConfigured()){
+    showToast('مزامنة Google Drive غير مُفعّلة بعد على هذا الموقع');
+    if(opts.onFail) opts.onFail();
+    return;
+  }
+  if(!window.google || !window.google.accounts || !window.google.accounts.oauth2){
+    if(!opts.silentOnly) showToast('تعذّر تحميل خدمة جوجل — تأكد من الاتصال بالإنترنت');
+    if(opts.onFail) opts.onFail();
+    return;
+  }
+
+  if(isDriveTokenValid()){
+    callback();
+    return;
+  }
+
+  // لو سبق وسجّل المستخدم دخول بحساب على هذا الجهاز، نحاول نجدد الصلاحية بصمت (بدون فتح نافذة اختيار حساب)
+  const trySilentFirst = !!driveUserInfo && !opts.forceInteractive;
+
+  const tokenClient = getDriveTokenClient((resp)=>{
+    if(resp && resp.access_token){
+      driveAccessToken = resp.access_token;
+      driveTokenExpiry = Date.now() + ((resp.expires_in || 3500) * 1000);
+      localStorage.setItem('drive-access-token', driveAccessToken);
+      localStorage.setItem('drive-token-expiry', String(driveTokenExpiry));
+      fetchAndStoreDriveUserInfo().then(callback);
+    } else {
+      if(trySilentFirst && !opts.silentOnly){
+        // فشلت المحاولة الصامتة (مثلاً انتهت الجلسة) — نجرب مرة وحدة تفاعلية (تفتح اختيار الحساب)
+        requestDriveAccess(callback, Object.assign({}, opts, { forceInteractive:true }));
+        return;
+      }
+      if(!opts.silentOnly) showToast('تعذّر تسجيل الدخول بحساب جوجل');
+      if(opts.onFail) opts.onFail();
+    }
+  });
+
+  tokenClient.requestAccessToken({ prompt: trySilentFirst ? '' : 'consent' });
+}
+
+async function fetchAndStoreDriveUserInfo(){
+  try{
+    const res = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+      headers: { Authorization: `Bearer ${driveAccessToken}` }
+    });
+    if(!res.ok) return;
+    const info = await res.json();
+    driveUserInfo = { name: info.name || info.email || '', email: info.email || '', picture: info.picture || '' };
+    localStorage.setItem('drive-user-info', JSON.stringify(driveUserInfo));
+    renderDriveAccountBadge();
+  }catch(e){ console.error('drive userinfo error', e); }
+}
+
+function renderDriveAccountBadge(){
+  const badge = document.getElementById('driveAccountBadge');
+  const hint = document.getElementById('driveNotConnectedHint');
+  const headerPic = document.getElementById('backupIconPic');
+  const headerDefault = document.getElementById('backupIconDefault');
+  if(driveUserInfo && driveUserInfo.email){
+    if(badge){
+      badge.style.display = 'flex';
+      const pic = document.getElementById('driveUserPic');
+      const name = document.getElementById('driveUserName');
+      const email = document.getElementById('driveUserEmail');
+      if(pic) pic.src = driveUserInfo.picture || '';
+      if(name) name.textContent = driveUserInfo.name || '';
+      if(email) email.textContent = driveUserInfo.email || '';
+    }
+    if(hint) hint.style.display = 'none';
+    if(driveUserInfo.picture && headerPic && headerDefault){
+      headerPic.src = driveUserInfo.picture;
+      headerPic.style.display = 'block';
+      headerDefault.style.display = 'none';
+    }
+  } else {
+    if(badge) badge.style.display = 'none';
+    if(hint) hint.style.display = 'block';
+    if(headerPic && headerDefault){
+      headerPic.style.display = 'none';
+      headerDefault.style.display = 'block';
+    }
+  }
+  const toggle = document.getElementById('autoSyncToggle');
+  if(toggle) toggle.checked = driveAutoSyncEnabled;
+  renderAutoSyncSwitchVisual();
+  renderAutoSyncStatus();
+}
+
+function renderAutoSyncSwitchVisual(){
+  const track = document.getElementById('autoSyncSwitchTrack');
+  const thumb = document.getElementById('autoSyncSwitchThumb');
+  if(track) track.style.background = driveAutoSyncEnabled ? 'var(--color-primary)' : 'var(--color-border)';
+  if(thumb) thumb.style.transform = driveAutoSyncEnabled ? 'translateX(-20px)' : 'translateX(0)';
+}
+
+function renderAutoSyncStatus(){
+  const el = document.getElementById('autoSyncStatus');
+  if(!el) return;
+  if(driveAutoSyncEnabled && !navigator.onLine){
+    el.textContent = 'غير متصل بالإنترنت الآن — البيانات تُحفظ بجهازك، وستُرفع تلقائيًا فور عودة الاتصال';
+  } else if(driveAutoSyncEnabled && driveUserInfo){
+    el.textContent = 'مفعّل — يحفظ تلقائيًا كل 15 دقيقة بحساب ' + (driveUserInfo.email || '');
+  } else if(driveAutoSyncEnabled && !driveUserInfo){
+    el.textContent = 'مفعّل — بانتظار أول تسجيل دخول';
+  } else {
+    el.textContent = '';
+  }
+}
+
+function toggleAutoSync(enabled){
+  driveAutoSyncEnabled = !!enabled;
+  localStorage.setItem('drive-auto-sync', driveAutoSyncEnabled ? '1' : '0');
+  renderAutoSyncSwitchVisual();
+  renderAutoSyncStatus();
+  if(driveAutoSyncEnabled){
+    if(!driveUserInfo){
+      // أول مرة يفعّل الحفظ التلقائي، لازم تسجيل دخول تفاعلي مرة وحدة
+      requestDriveAccess(()=>{ backupToDrive(true); startAutoSyncTimer(); }, {
+        onFail: ()=>{ driveAutoSyncEnabled = false; localStorage.setItem('drive-auto-sync','0'); renderDriveAccountBadge(); }
+      });
+    } else {
+      startAutoSyncTimer();
+    }
+  } else {
+    stopAutoSyncTimer();
+  }
+}
+
+function startAutoSyncTimer(){
+  stopAutoSyncTimer();
+  if(!driveAutoSyncEnabled) return;
+  driveAutoSyncTimer = setInterval(()=>{
+    if(!driveUserInfo || !navigator.onLine) return;
+    requestDriveAccess(()=>{ backupToDrive(true); }, { silentOnly:true });
+  }, AUTO_SYNC_INTERVAL_MS);
+}
+
+function stopAutoSyncTimer(){
+  if(driveAutoSyncTimer){ clearInterval(driveAutoSyncTimer); driveAutoSyncTimer = null; }
+}
+
+function signOutDrive(){
+  try{
+    if(driveAccessToken && window.google && google.accounts && google.accounts.oauth2 && google.accounts.oauth2.revoke){
+      google.accounts.oauth2.revoke(driveAccessToken, ()=>{});
+    }
+  }catch(e){}
+  driveAccessToken = null;
+  driveTokenExpiry = 0;
+  driveUserInfo = null;
+  driveAutoSyncEnabled = false;
+  stopAutoSyncTimer();
+  localStorage.removeItem('drive-access-token');
+  localStorage.removeItem('drive-token-expiry');
+  localStorage.removeItem('drive-user-info');
+  localStorage.setItem('drive-auto-sync', '0');
+  renderDriveAccountBadge();
+  showToast('تم تسجيل الخروج من Google Drive');
+}
+
+// عند فتح التطبيق: لو سبق وسجّل المستخدم دخول على هذا الجهاز، نعرض بطاقة حسابه فورًا،
+// ونشغّل الحفظ التلقائي (إذا كان مفعّل) بدون أي تفاعل مطلوب من المستخدم.
+function initDriveSync(){
+  renderDriveAccountBadge();
+  if(driveAutoSyncEnabled && driveUserInfo){
+    startAutoSyncTimer();
+  }
+}
+
+// ---------- العمل بدون إنترنت + الحفظ التلقائي فور عودة الاتصال ----------
+// كل بيانات الحالات تُحفظ محليًا بالجهاز (localStorage) بشكل فوري بغض النظر عن الاتصال،
+// فالتطبيق يبقى يعمل عاديًا بدون نت. الجزء التالي فقط يراقب حالة الاتصال ليرفع نسخة
+// إلى Google Drive تلقائيًا بلحظة رجوع الإنترنت (إذا كان الحفظ التلقائي مفعّل ومسجّل دخول)،
+// بدل انتظار الدورة القادمة (كل 15 دقيقة).
+let wasOfflineToastShown = false;
+window.addEventListener('offline', ()=>{
+  renderAutoSyncStatus();
+  if(!wasOfflineToastShown){
+    showToast('تم فقدان الاتصال بالإنترنت — التطبيق يعمل بدون نت والبيانات تُحفظ بجهازك');
+    wasOfflineToastShown = true;
+  }
+});
+window.addEventListener('online', ()=>{
+  wasOfflineToastShown = false;
+  renderAutoSyncStatus();
+  if(driveAutoSyncEnabled && driveUserInfo){
+    showToast('عاد الاتصال بالإنترنت — جارِ رفع نسخة احتياطية تلقائيًا...');
+    requestDriveAccess(()=>{ backupToDrive(true); }, { silentOnly:true });
+  }
+});
+
+async function findExistingDriveBackup(){
+  const res = await fetch(`https://www.googleapis.com/drive/v3/files?q=name='${encodeURIComponent(DRIVE_BACKUP_FILENAME)}'&spaces=drive&fields=files(id,name)`, {
+    headers: { Authorization: `Bearer ${driveAccessToken}` }
+  });
+  const data = await res.json();
+  if(data.files && data.files.length > 0) return data.files[0].id;
+  return null;
+}
+
+async function collectAllLocalRecordsAsJson(){
+  const { keys } = await LocalDB.list('case:');
+  const items = {};
+  for(const k of keys){
+    const rec = LocalDB.get(k);
+    if(rec) items[k] = rec.value;
+  }
+  return JSON.stringify(items);
+}
+
+async function backupToDrive(silent){
+  requestDriveAccess(async ()=>{
+    try{
+      if(!silent) showToast('جارِ رفع النسخة الاحتياطية إلى Google Drive...');
+      const jsonContent = await collectAllLocalRecordsAsJson();
+      if(!driveFileId) driveFileId = await findExistingDriveBackup();
+
+      const metadata = { name: DRIVE_BACKUP_FILENAME, mimeType: 'application/json' };
+      const boundary = '-------medcases' + Date.now();
+      const body =
+        `--${boundary}\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n${JSON.stringify(metadata)}\r\n` +
+        `--${boundary}\r\nContent-Type: application/json\r\n\r\n${jsonContent}\r\n--${boundary}--`;
+
+      const url = driveFileId
+        ? `https://www.googleapis.com/upload/drive/v3/files/${driveFileId}?uploadType=multipart`
+        : `https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart`;
+      const method = driveFileId ? 'PATCH' : 'POST';
+
+      const res = await fetch(url, {
+        method,
+        headers: {
+          Authorization: `Bearer ${driveAccessToken}`,
+          'Content-Type': `multipart/related; boundary=${boundary}`
+        },
+        body
+      });
+      const result = await res.json();
+      if(result.id){
+        driveFileId = result.id;
+        localStorage.setItem('drive-backup-file-id', driveFileId);
+        showToast(silent ? 'تم الحفظ التلقائي في Google Drive ✓' : 'تم حفظ نسخة احتياطية في Google Drive ✓');
+      } else {
+        throw new Error('upload failed');
+      }
+    }catch(e){
+      console.error('backupToDrive error', e);
+      if(!silent) showToast('تعذّر رفع النسخة الاحتياطية، حاول مرة أخرى');
+    }
+  }, { silentOnly: !!silent });
+}
+
+async function restoreFromDrive(){
+  requestDriveAccess(async ()=>{
+    try{
+      showToast('جارِ البحث عن نسخة احتياطية في Google Drive...');
+      const fileId = driveFileId || await findExistingDriveBackup();
+      if(!fileId){
+        showToast('لا توجد نسخة احتياطية سابقة بهذا الحساب');
+        return;
+      }
+      const res = await fetch(`https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`, {
+        headers: { Authorization: `Bearer ${driveAccessToken}` }
+      });
+      const items = await res.json();
+      let restored = 0;
+      for(const key in items){
+        LocalDB.set(key, items[key]);
+        restored++;
+      }
+      driveFileId = fileId;
+      localStorage.setItem('drive-backup-file-id', driveFileId);
+      showToast(`تم استرجاع ${restored} حالة من Google Drive ✓`);
+      if(typeof refreshSavedCount === 'function') refreshSavedCount();
+      if(typeof loadAndRenderRecords === 'function') loadAndRenderRecords();
+    }catch(e){
+      console.error('restoreFromDrive error', e);
+      showToast('تعذّر استرجاع النسخة الاحتياطية');
+    }
+  });
+}
+
+let cachedCases = [];
+let cachedRecords = [];
+
+// ---------- direct file transfer between devices (no internet / no shared account needed) ----------
+
+// Case keys are always generated by this app as case:<timestamp>_<6-char base36>,
+// so we only ever accept that exact shape on import — this blocks a tampered/malicious
+// file from injecting an unsafe key (e.g. containing quotes) into local storage.
+const TRANSFER_KEY_RE = /^case:\d{10,20}_[a-z0-9]{4,10}$/;
+
+async function exportTransferFile(){
+  try{
+    const jsonContent = await collectAllLocalRecordsAsJson();
+    const count = Object.keys(JSON.parse(jsonContent)).length;
+    if(count === 0){ showToast('لا توجد حالات لتصديرها بعد'); return; }
+
+    const filename = `نقل-بيانات-${todayStr()}.json`;
+    const blob = new Blob([jsonContent], {type: 'application/json'});
+    const shared = await tryNativeShare(blob, filename, 'application/json', 'ملف نقل بيانات الحالات');
+    if(!shared){
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(()=> URL.revokeObjectURL(url), 4000);
+      showToast('تم حفظ ملف النقل — أرسليه لزميلتك عبر واتساب أو تيليجرام');
+    }
+  }catch(e){
+    console.error('exportTransferFile error', e);
+    showToast('تعذّر إنشاء ملف النقل');
+  }
+}
+
+function triggerImportTransferFile(){
+  const input = document.getElementById('transferFileInput');
+  if(!input){ showToast('تعذّر فتح نافذة اختيار الملف'); return; }
+  input.click();
+}
+
+async function handleTransferFileSelected(fileInput){
+  const file = fileInput.files && fileInput.files[0];
+  fileInput.value = ''; // allow re-selecting the same file later
+  if(!file){
+    showToast('لم يتم اختيار أي ملف');
+    return;
+  }
+  showToast(`جارِ قراءة الملف: ${file.name}...`);
+
+  let text;
+  try{
+    text = await new Promise((resolve, reject)=>{
+      const reader = new FileReader();
+      reader.onload = ()=> resolve(reader.result);
+      reader.onerror = ()=> reject(reader.error || new Error('read failed'));
+      reader.readAsText(file, 'UTF-8');
+    });
+  }catch(e){
+    console.error('handleTransferFileSelected read error', e);
+    showToast('تعذّر قراءة الملف من الجهاز — جربي مرة أخرى');
+    return;
+  }
+
+  try{
+    let items;
+    try{ items = JSON.parse(text); }
+    catch(e){ showToast('الملف غير صالح — تأكدي إنه ملف نقل بيانات صحيح'); return; }
+
+    // some share/forward apps re-wrap text content as a quoted JSON string —
+    // if that happened, unwrap it once before validating the structure
+    if(typeof items === 'string'){
+      try{ items = JSON.parse(items); }catch(e){ /* leave as-is, will fail the check below */ }
+    }
+
+    if(!items || typeof items !== 'object' || Array.isArray(items)){
+      showToast('صيغة الملف غير مدعومة');
+      return;
+    }
+
+    let imported = 0, skipped = 0;
+    for(const key of Object.keys(items)){
+      if(!TRANSFER_KEY_RE.test(key)){ skipped++; continue; }
+      let rec;
+      try{ rec = JSON.parse(items[key]); }catch(e){ skipped++; continue; }
+      if(!rec || typeof rec !== 'object' || !rec.name || !rec.diagnosis){ skipped++; continue; }
+      LocalDB.set(key, items[key]);
+      imported++;
+    }
+
+    if(imported === 0){
+      showToast(skipped > 0 ? 'تعذّر العثور على حالات صالحة بهذا الملف' : 'الملف فارغ');
+      return;
+    }
+    showToast(`تم استيراد ${imported} حالة${skipped > 0 ? ` (تخطّي ${skipped} غير صالحة)` : ''} ✓`);
+    if(typeof showSuccessBurst === 'function') showSuccessBurst(`تم استيراد ${imported} حالة`);
+    if(typeof refreshSavedCount === 'function') refreshSavedCount();
+    if(typeof loadAndRenderRecords === 'function') loadAndRenderRecords();
+    if(typeof loadAndRenderStats === 'function') loadAndRenderStats();
+    if(typeof closeBackupPanel === 'function') setTimeout(closeBackupPanel, 900);
+  }catch(e){
+    console.error('handleTransferFileSelected error', e);
+    showToast('تعذّر معالجة الملف: ' + (e && e.message ? e.message : 'خطأ غير معروف'));
+  }
+}
+let editingKey = null;
+
+// ---------- registration groups (مجموعة إدارة الكوارث / مجموعة السفير) ----------
+const GROUPS = [
+  {id:'disaster', label:'مجموعة إدارة الكوارث'},
+  {id:'safir', label:'مجموعة السفير'}
+];
+const GROUP_KEY = 'app-config:selected-group';
+let currentGroup = GROUPS[0].id;   // sticky group used when registering a new case
+let editSavedGroup = null;         // remembers the sticky group while editing a case from another group
+
+function groupLabel(id){
+  if(currentGroupNames && currentGroupNames[id]) return currentGroupNames[id];
+  const g = GROUPS.find(x=>x.id===id);
+  return g ? g.label : 'غير محدد';
+}
+
+function renderGroupSelector(){
+  document.querySelectorAll('#groupSwitchGrid .group-box').forEach(btn=>{
+    btn.classList.toggle('active', btn.dataset.group === currentGroup);
+  });
+}
+
+async function selectGroup(id){
+  if(!GROUPS.some(g=>g.id===id)) return;
+  currentGroup = id;
+  renderGroupSelector();
+  vibrateLight();
+  // while editing a case, switching the box only re-assigns *this* case's group
+  // and must not overwrite the sticky default used for new registrations
+  if(!editingKey){
+    try{ await window.storage.set(GROUP_KEY, id, true); }catch(e){ /* ignore */ }
+  }
+}
+
+async function initGroupSelector(){
+  try{
+    const res = await window.storage.get(GROUP_KEY, true);
+    if(res && res.value && GROUPS.some(g=>g.id===res.value)){
+      currentGroup = res.value;
+    }
+  }catch(e){ /* keep default */ }
+  renderGroupSelector();
+  statsActiveGroup = currentGroup;
+  recordsActiveGroup = currentGroup;
+  renderSubtabs('statsGroupTabs', statsActiveGroup);
+  renderSubtabs('recordsGroupTabs', recordsActiveGroup);
+}
+
+function renderSubtabs(containerId, activeId){
+  const el = document.getElementById(containerId);
+  if(!el) return;
+  el.querySelectorAll('.subtab-btn').forEach(btn=>{
+    btn.classList.toggle('active', btn.dataset.group === activeId);
+  });
+}
+
+// ---------- group filters for the records / stats screens ----------
+let statsActiveGroup = currentGroup;
+let recordsActiveGroup = currentGroup;
+let recordsActiveShift = 'all';
+
+function filterCasesByGroup(cases, groupId){
+  if(groupId === 'all') return cases;
+  return cases.filter(c => (c.group || GROUPS[0].id) === groupId);
+}
+
+function setStatsGroupFilter(id){
+  statsActiveGroup = id;
+  renderSubtabs('statsGroupTabs', id);
+  loadAndRenderStats();
+}
+
+function setRecordsGroupFilter(id){
+  recordsActiveGroup = id;
+  renderSubtabs('recordsGroupTabs', id);
+  loadAndRenderRecords();
+}
+
+function renderRecordsShiftFilter(){
+  const container = document.getElementById('recordsShiftFilter');
+  if(!container) return;
+  const shifts = (currentConfig && currentConfig.shift) || [];
+  if(recordsActiveShift !== 'all' && !shifts.includes(recordsActiveShift)){
+    recordsActiveShift = 'all';
+  }
+  const options = ['all', ...shifts];
+  container.innerHTML = options.map(val => `
+    <button type="button" class="radio-option${val===recordsActiveShift ? ' checked' : ''}" data-shift="${escapeHtml(val)}">${escapeHtml(val==='all' ? 'الكل' : val)}</button>
+  `).join('');
+  container.querySelectorAll('.radio-option').forEach(btn=>{
+    btn.addEventListener('click', ()=> setRecordsShiftFilter(btn.dataset.shift));
+  });
+}
+
+function setRecordsShiftFilter(value){
+  if(value === recordsActiveShift) return;
+  recordsActiveShift = value;
+  renderRecordsShiftFilter();
+  loadAndRenderRecords();
+}
+
+// ---------- helpers ----------
+function todayStr(){
+  const d = new Date();
+  const yyyy = d.getFullYear();
+  const mm = String(d.getMonth()+1).padStart(2,'0');
+  const dd = String(d.getDate()).padStart(2,'0');
+  return `${yyyy}-${mm}-${dd}`;
+}
+document.getElementById('f-date').value = todayStr();
+
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(()=> t.classList.remove('show'), 2200);
+}
+
+// ---------- tabs ----------
+const TAB_ORDER = ['form', 'records', 'stats'];
+
+function vibrateLight(){
+  try{ if(navigator.vibrate) navigator.vibrate(8); }catch(err){ /* not supported */ }
+}
+
+function moveTabIndicator(btn){
+  const indicator = document.getElementById('tabIndicator');
+  const bar = document.getElementById('bottomNav');
+  if(!indicator || !btn || !bar) return;
+  const barRect = bar.getBoundingClientRect();
+  const btnRect = btn.getBoundingClientRect();
+  const x = btnRect.left - barRect.left;
+  indicator.style.width = btnRect.width + 'px';
+  indicator.style.transform = `translateX(${x}px)`;
+}
+
+let currentTab = 'form';
+function switchTab(tab){
+  if(tab === currentTab) return;
+  const leavingStats = document.getElementById('screen-stats').classList.contains('active') && tab !== 'stats';
+  vibrateLight();
+
+  const fromIdx = TAB_ORDER.indexOf(currentTab);
+  const toIdx = TAB_ORDER.indexOf(tab);
+  const dirClass = toIdx > fromIdx ? 'dir-forward' : 'dir-back';
+
+  ['form','records','stats'].forEach(t=>{
+    const screenEl = document.getElementById('screen-' + t);
+    screenEl.classList.remove('dir-forward','dir-back');
+    if(t === tab) screenEl.classList.add(dirClass);
+    screenEl.classList.toggle('active', t === tab);
+  });
+  document.getElementById('tabFormBtn').classList.toggle('active', tab==='form');
+  document.getElementById('tabRecordsBtn').classList.toggle('active', tab==='records');
+  document.getElementById('tabStatsBtn').classList.toggle('active', tab==='stats');
+  currentTab = tab;
+
+  const activeBtn = document.getElementById(
+    tab==='form' ? 'tabFormBtn' : (tab==='records' ? 'tabRecordsBtn' : 'tabStatsBtn')
+  );
+  requestAnimationFrame(()=> moveTabIndicator(activeBtn));
+
+  if(tab === 'stats'){
+    loadAndRenderStats();
+  }
+  if(tab === 'records'){
+    loadAndRenderRecords();
+  }
+  if(leavingStats) maybeRemindPdfBackup();
+}
+
+window.addEventListener('resize', ()=>{
+  const activeBtn = document.querySelector('.tab-btn.active');
+  if(activeBtn) moveTabIndicator(activeBtn);
+});
+window.addEventListener('load', ()=>{
+  const activeBtn = document.querySelector('.tab-btn.active');
+  if(activeBtn) moveTabIndicator(activeBtn);
+});
+
+// ---------- swipe-to-switch-tabs disabled per request: navigation between
+// screens/fields now happens only via the bottom nav buttons, not by a
+// sideways touch gesture (this was interfering with normal scrolling/typing
+// inside the form). ----------
+
+// ---------- gentle reminder to keep a PDF backup (true "save on exit" isn't reliable in a
+// wrapped WebView — the OS can end the page before any async save finishes, and a silent
+// download without a tap is usually blocked — so this nudges the user to do it themselves,
+// which is the version of this feature that will actually work) ----------
+async function maybeRemindPdfBackup(){
+  try{
+    if(sessionStorage.getItem('pdf-backup-done') === '1') return;
+    const cases = (cachedCases && cachedCases.length) ? cachedCases : await loadAllCases();
+    if(cases && cases.length > 0) showToast('لا تنسي أخذ نسخة PDF احتياطية من الإحصائيات ⬆');
+  }catch(err){ /* best effort only */ }
+}
+document.addEventListener('visibilitychange', ()=>{
+  if(document.visibilityState === 'hidden') maybeRemindPdfBackup();
+});
+
+// ---------- success micro-interaction (brief animated checkmark burst) ----------
+function showSuccessBurst(message){
+  vibrateLight();
+  const el = document.createElement('div');
+  el.className = 'success-burst';
+  el.innerHTML = `
+    <div class="success-burst-circle">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <path class="success-burst-check" d="M5 13l4 4L19 7"/>
+      </svg>
+    </div>
+    <div class="success-burst-text">${escapeHtml(message || 'تم بنجاح')}</div>`;
+  document.body.appendChild(el);
+  requestAnimationFrame(()=> el.classList.add('show'));
+  setTimeout(()=>{
+    el.classList.remove('show');
+    setTimeout(()=> el.remove(), 250);
+  }, 1200);
+}
+
+// ---------- custom select (inline dropdown attached to its field, replaces native <select> UI) ----------
+const CustomSelect = (function(){
+  let openSelectEl = null;
+
+  function closeDropdown(selectEl){
+    if(!selectEl || !selectEl._dropdownEl) return;
+    selectEl._dropdownEl.classList.remove('open');
+    if(selectEl._triggerEl) selectEl._triggerEl.classList.remove('open');
+    if(openSelectEl === selectEl) openSelectEl = null;
+  }
+
+  function closeAll(){
+    if(openSelectEl) closeDropdown(openSelectEl);
+  }
+
+  function renderList(selectEl){
+    const listEl = selectEl._listEl;
+    if(!listEl) return;
+    const options = Array.from(selectEl.options).map(o=>o.value);
+    const currentVal = selectEl.value;
+    if(options.length === 0){
+      listEl.innerHTML = '';
+      return;
+    }
+    listEl.innerHTML = options.map(opt => `
+      <div class="dd-option${opt===currentVal ? ' selected' : ''}" data-value="${escapeHtml(opt)}">
+        <span>${escapeHtml(opt)}</span>
+        <span class="st-check">✓</span>
+      </div>`).join('');
+    listEl.querySelectorAll('.dd-option').forEach(row=>{
+      row.addEventListener('click', (e)=>{
+        e.stopPropagation();
+        selectValue(selectEl, row.dataset.value);
+      });
+    });
+  }
+
+  function selectValue(selectEl, value){
+    selectEl.value = value;
+    selectEl.dispatchEvent(new Event('change', {bubbles:true}));
+    syncTriggerLabel(selectEl);
+    closeDropdown(selectEl);
+    if(window.vibrateLight) vibrateLight();
+  }
+
+  function openDropdown(selectEl){
+    if(openSelectEl && openSelectEl !== selectEl) closeDropdown(openSelectEl);
+    renderList(selectEl);
+    selectEl._dropdownEl.classList.add('open');
+    if(selectEl._triggerEl) selectEl._triggerEl.classList.add('open');
+    openSelectEl = selectEl;
+    const selectedRow = selectEl._listEl.querySelector('.dd-option.selected');
+    if(selectedRow) selectedRow.scrollIntoView({block:'nearest'});
+  }
+
+  function toggleDropdown(selectEl){
+    const isOpen = selectEl._dropdownEl.classList.contains('open');
+    if(isOpen) closeDropdown(selectEl);
+    else openDropdown(selectEl);
+  }
+
+  function syncTriggerLabel(selectEl){
+    const trigger = selectEl._triggerEl;
+    if(!trigger) return;
+    const valueEl = trigger.querySelector('.st-value');
+    if(selectEl.value){
+      valueEl.textContent = selectEl.value;
+      valueEl.classList.remove('placeholder');
+    }else{
+      valueEl.textContent = trigger.dataset.placeholder || 'اختر...';
+      valueEl.classList.add('placeholder');
+    }
+  }
+
+  function enhance(selectEl, sheetTitle, placeholder){
+    selectEl.style.position = 'absolute';
+    selectEl.style.opacity = '0';
+    selectEl.style.pointerEvents = 'none';
+    selectEl.style.width = '1px';
+    selectEl.style.height = '1px';
+    selectEl.tabIndex = -1;
+
+    const trigger = document.createElement('button');
+    trigger.type = 'button';
+    trigger.className = 'select-trigger';
+    trigger.dataset.placeholder = placeholder || 'اختر...';
+    trigger.innerHTML = `<span class="st-value placeholder"></span><span class="st-chevron"></span>`;
+    trigger.addEventListener('click', (e)=>{ e.stopPropagation(); toggleDropdown(selectEl); });
+
+    const dropdown = document.createElement('div');
+    dropdown.className = 'dd-panel';
+    dropdown.innerHTML = `<div class="dd-list"></div>`;
+    dropdown.addEventListener('click', (e)=> e.stopPropagation());
+
+    selectEl.insertAdjacentElement('afterend', trigger);
+    trigger.insertAdjacentElement('afterend', dropdown);
+
+    selectEl._triggerEl = trigger;
+    selectEl._dropdownEl = dropdown;
+    selectEl._listEl = dropdown.querySelector('.dd-list');
+    syncTriggerLabel(selectEl);
+  }
+
+  document.addEventListener('click', closeAll);
+  document.addEventListener('scroll', (e)=>{
+    if(openSelectEl && openSelectEl._dropdownEl && openSelectEl._dropdownEl.contains(e.target)) return;
+    closeAll();
+  }, true);
+
+  return { enhance, syncTriggerLabel };
+})();
+
+CustomSelect.enhance(document.getElementById('f-nationality'), 'اختر الجنسية', 'اختر الجنسية');
+CustomSelect.enhance(document.getElementById('f-diagnosis'), 'اختر التشخيص', 'اختر التشخيص');
+
+// ---------- free-text combo field (typeable input + arrow button that lists saved suggestions) ----------
+const ComboField = (function(){
+  let openState = null;
+
+  function closeDropdown(state){
+    if(!state) return;
+    state.dropdownEl.classList.remove('open');
+    state.arrowEl.classList.remove('open');
+    if(openState === state) openState = null;
+  }
+  function closeAll(){ if(openState) closeDropdown(openState); }
+
+  function renderList(state){
+    const options = state.getOptions() || [];
+    const currentVal = state.inputEl.value;
+    if(options.length === 0){
+      state.listEl.innerHTML = '<div class="admin-empty-hint" style="padding:10px;">لا توجد اختيارات محفوظة بعد</div>';
+      return;
+    }
+    state.listEl.innerHTML = options.map(opt => `
+      <div class="dd-option${opt===currentVal ? ' selected' : ''}" data-value="${escapeHtml(opt)}">
+        <span>${escapeHtml(opt)}</span>
+        <span class="st-check">✓</span>
+      </div>`).join('');
+    state.listEl.querySelectorAll('.dd-option').forEach(row=>{
+      row.addEventListener('click', (e)=>{
+        e.stopPropagation();
+        state.inputEl.value = row.dataset.value;
+        state.inputEl.dispatchEvent(new Event('input', {bubbles:true}));
+        state.inputEl.dispatchEvent(new Event('change', {bubbles:true}));
+        closeDropdown(state);
+        if(window.vibrateLight) vibrateLight();
+      });
+    });
+  }
+
+  function openDropdown(state){
+    if(openState && openState !== state) closeDropdown(openState);
+    renderList(state);
+    state.dropdownEl.classList.add('open');
+    state.arrowEl.classList.add('open');
+    openState = state;
+    const selectedRow = state.listEl.querySelector('.dd-option.selected');
+    if(selectedRow) selectedRow.scrollIntoView({block:'nearest'});
+  }
+
+  function toggleDropdown(state){
+    const isOpen = state.dropdownEl.classList.contains('open');
+    if(isOpen) closeDropdown(state); else openDropdown(state);
+  }
+
+  function enhance(inputId, arrowId, getOptions){
+    const inputEl = document.getElementById(inputId);
+    const arrowEl = document.getElementById(arrowId);
+    if(!inputEl || !arrowEl) return;
+
+    const dropdown = document.createElement('div');
+    dropdown.className = 'dd-panel';
+    dropdown.innerHTML = `<div class="dd-list"></div>`;
+    dropdown.addEventListener('click', (e)=> e.stopPropagation());
+    arrowEl.insertAdjacentElement('afterend', dropdown);
+
+    const state = {inputEl, arrowEl, dropdownEl: dropdown, listEl: dropdown.querySelector('.dd-list'), getOptions};
+    arrowEl.addEventListener('click', (e)=>{ e.stopPropagation(); toggleDropdown(state); });
+  }
+
+  document.addEventListener('click', closeAll);
+  document.addEventListener('scroll', (e)=>{
+    if(openState && openState.dropdownEl && openState.dropdownEl.contains(e.target)) return;
+    closeAll();
+  }, true);
+
+  return { enhance };
+})();
+
+ComboField.enhance('f-team-code', 'f-team-code-arrow', () => (currentConfig && currentConfig.teamCode) || []);
+
+// ---------- status radio (dynamic, built from field config) ----------
+const statusGroup = document.getElementById('statusGroup');
+const genderGroup = document.getElementById('genderGroup');
+const shiftGroup = document.getElementById('shiftGroup');
+const transferField = document.getElementById('transferField');
+
+function renderRadioGroup(container, options, groupName){
+  container.innerHTML = options.map((opt, idx) => `
+    <label class="radio-option${idx===0 ? ' checked' : ''}" data-value="${escapeHtml(opt)}">
+      <input type="radio" name="${groupName}" value="${escapeHtml(opt)}" ${idx===0 ? 'checked' : ''}> ${escapeHtml(opt)}
+    </label>`).join('');
+  attachRadioGroupListeners(container, groupName);
+}
+
+function attachRadioGroupListeners(container, groupName){
+  container.querySelectorAll(`input[name="${groupName}"]`).forEach(input=>{
+    input.addEventListener('change', ()=>{
+      container.querySelectorAll('.radio-option').forEach(opt=>{
+        opt.classList.toggle('checked', opt.dataset.value === input.value);
+      });
+    });
+  });
+}
+
+function setRadioGroupValue(container, groupName, value){
+  container.querySelectorAll(`input[name="${groupName}"]`).forEach(i=> i.checked = (i.value === value));
+  container.querySelectorAll('.radio-option').forEach(opt=> opt.classList.toggle('checked', opt.dataset.value === value));
+}
+
+// ---------- helper: set a custom-select-backed <select> value and keep its trigger in sync ----------
+function setSelectValue(id, value){
+  const el = document.getElementById(id);
+  if(!el) return;
+  el.value = value;
+  if(el._triggerEl) CustomSelect.syncTriggerLabel(el);
+}
+
+// ---------- keyboard UX: keep the on-screen keyboard open while navigating between fields, and jump to the next field on Enter ----------
+(function(){
+  // Tapping a control that doesn't need typing (custom select trigger, its options, radio choices,
+  // group tabs, buttons) would otherwise steal focus away from the current text field and dismiss
+  // the keyboard, which then has to reopen on the next text field. Blocking the default mousedown
+  // action keeps focus (and the keyboard) exactly where it was, while the tap/click itself still works.
+  const NO_FOCUS_STEAL_SELECTOR = '.select-trigger, .combo-arrow-btn, .dd-option, .radio-option, .group-box, .tab-btn, .subtab-btn';
+  function preventFocusSteal(e){
+    const el = e.target.closest(NO_FOCUS_STEAL_SELECTOR);
+    if(el) e.preventDefault();
+  }
+  // pointerdown fires (and can be cancelled) before the browser assigns focus on touch devices,
+  // where a plain mousedown listener alone often reacts too late. mousedown is kept too for
+  // browsers without pointer events. Neither call blocks the click itself.
+  document.addEventListener('pointerdown', preventFocusSteal);
+  document.addEventListener('mousedown', preventFocusSteal);
+
+  // Radio options (gender / status / shift) are native <input type="radio"> elements inside a
+  // <label>. Their browser-assigned focus happens as part of the click's own default action, so
+  // preventing pointerdown/mousedown above can't stop it there — the keyboard still dismisses for
+  // an instant. Instead, remember the last text field the person was typing in, and the moment a
+  // radio choice changes, hand focus straight back to it so the keyboard reopens immediately.
+  let lastTextFocus = null;
+  document.addEventListener('focusin', function(e){
+    const t = e.target;
+    if(t && t.tagName === 'INPUT' && ['text','number','date','tel','email','search'].includes(t.type) && t.closest('.card')){
+      lastTextFocus = t;
+    }
+  });
+  document.addEventListener('change', function(e){
+    const t = e.target;
+    if(t && t.matches && t.matches('input[type="radio"]') && t.closest('.radio-group')){
+      if(lastTextFocus && document.body.contains(lastTextFocus) && document.activeElement !== lastTextFocus){
+        lastTextFocus.focus();
+      }
+    }
+  });
+
+  function formSequence(){
+    const ids = ['f-name','f-nationality','f-age','genderGroup','f-diagnosis','statusGroup','f-transfer-location','f-team-code','shiftGroup','f-date'];
+    const seq = [];
+    ids.forEach(id=>{
+      const el = document.getElementById(id);
+      if(!el || el.offsetParent === null) return;
+      // Enter should only ever land on a typeable text field — selects and radio choices are
+      // skipped entirely since there's nothing to type into them.
+      if(el.tagName === 'INPUT' && ['text','number','date','tel','email','search'].includes(el.type)){
+        seq.push(el);
+      }
+    });
+    return seq;
+  }
+
+  document.addEventListener('keydown', function(e){
+    if(e.key !== 'Enter') return;
+    const t = e.target;
+    if(!t || t.tagName !== 'INPUT') return;
+    if(!['text','number','date','tel','email','search'].includes(t.type)) return;
+    if(!t.closest('.card')) return;
+    e.preventDefault();
+    const seq = formSequence();
+    const idx = seq.indexOf(t);
+    if(idx === -1) return;
+    const next = seq[idx + 1];
+    if(next) next.focus();
+    else{
+      t.blur();
+      const saveBtn = document.getElementById('saveBtn');
+      if(saveBtn) saveBtn.focus();
+    }
+  });
+})();
+
+// ---------- storage ----------
+async function loadAllCases(){
+  try{
+    const listResult = await window.storage.list('case:', true);
+    const keys = (listResult && listResult.keys) ? listResult.keys : [];
+    const cases = [];
+    for(const key of keys){
+      try{
+        const res = await window.storage.get(key, true);
+        if(res && res.value){
+          const data = JSON.parse(res.value);
+          cases.push({...data, key});
+        }
+      }catch(e){ /* skip unreadable record */ }
+    }
+    cases.sort((a,b)=> (b.createdAt||0) - (a.createdAt||0));
+    return cases;
+  }catch(e){
+    console.error('loadAllCases error', e);
+    return [];
+  }
+}
+
+async function refreshSavedCount(){
+  try{
+    const listResult = await window.storage.list('case:', true);
+    const count = (listResult && listResult.keys) ? listResult.keys.length : 0;
+    document.getElementById('savedCount').textContent = count;
+  }catch(e){
+    document.getElementById('savedCount').textContent = '0';
+  }
+}
+
+async function saveCase(){
+  const name = document.getElementById('f-name').value.trim();
+  const nationality = document.getElementById('f-nationality').value;
+  const age = document.getElementById('f-age').value;
+  const genderInput = genderGroup.querySelector('input[name="gender"]:checked');
+  const gender = genderInput ? genderInput.value : '';
+  const diagnosis = document.getElementById('f-diagnosis').value.trim();
+  const statusInput = statusGroup.querySelector('input[name="status"]:checked');
+  const status = statusInput ? statusInput.value : 'شفاء';
+  const transferLocation = document.getElementById('f-transfer-location').value.trim();
+  const teamCode = document.getElementById('f-team-code').value.trim();
+  const shiftInput = shiftGroup.querySelector('input[name="shift"]:checked');
+  const shift = shiftInput ? shiftInput.value : '';
+  const date = document.getElementById('f-date').value || todayStr();
+
+  if(!name){
+    showToast('الرجاء إدخال الاسم');
+    document.getElementById('f-name').focus();
+    return;
+  }
+  if(!diagnosis){
+    showToast('الرجاء إدخال التشخيص');
+    const diagTrigger = document.getElementById('f-diagnosis')._triggerEl;
+    if(diagTrigger) diagTrigger.focus(); else document.getElementById('f-diagnosis').focus();
+    return;
+  }
+
+  const wasEditing = !!editingKey;
+  const existing = wasEditing ? cachedRecords.find(c=>c.key===editingKey) : null;
+
+  const record = {
+    name, nationality, age, gender, diagnosis, status,
+    transferLocation,
+    teamCode, shift, date,
+    group: currentGroup,
+    createdAt: existing ? (existing.createdAt || Date.now()) : Date.now(),
+    updatedAt: Date.now()
+  };
+
+  const saveBtn = document.getElementById('saveBtn');
+  saveBtn.disabled = true;
+  saveBtn.textContent = wasEditing ? 'جارِ التحديث...' : 'جارِ الحفظ...';
+
+  try{
+    const key = wasEditing ? editingKey : `case:${record.createdAt}_${Math.random().toString(36).slice(2,8)}`;
+    const result = await window.storage.set(key, JSON.stringify(record), true);
+    if(!result){
+      throw new Error('save failed');
+    }
+    showToast(wasEditing ? 'تم تحديث الحالة بنجاح ✓' : 'تم حفظ الحالة بنجاح ✓');
+    showSuccessBurst(wasEditing ? 'تم التحديث' : 'تم الحفظ');
+    cancelEdit();
+    await refreshSavedCount();
+    if(wasEditing){
+      await loadAndRenderRecords();
+      switchTab('records');
+    }
+  }catch(e){
+    console.error('saveCase error', e);
+    showToast(wasEditing ? 'تعذّر تحديث الحالة، حاول مرة أخرى' : 'تعذّر حفظ الحالة، حاول مرة أخرى');
+  }finally{
+    saveBtn.disabled = false;
+    saveBtn.textContent = editingKey ? 'تحديث الحالة ✓' : 'حفظ الحالة ✓';
+  }
+}
+
+function resetForm(){
+  document.getElementById('f-name').value = '';
+  setSelectValue('f-nationality', '');
+  document.getElementById('f-age').value = '';
+  setSelectValue('f-diagnosis', '');
+  document.getElementById('f-transfer-location').value = '';
+  document.getElementById('f-team-code').value = '';
+  document.getElementById('f-date').value = todayStr();
+
+  const defaultGender = (currentConfig && currentConfig.gender && currentConfig.gender[0]) || '';
+  setRadioGroupValue(genderGroup, 'gender', defaultGender);
+
+  const defaultShift = (currentConfig && currentConfig.shift && currentConfig.shift[0]) || '';
+  setRadioGroupValue(shiftGroup, 'shift', defaultShift);
+
+  const defaultStatus = (currentConfig && currentConfig.status && currentConfig.status[0]) || 'شفاء';
+  setRadioGroupValue(statusGroup, 'status', defaultStatus);
+}
+
+function cancelEdit(){
+  editingKey = null;
+  document.getElementById('editBanner').style.display = 'none';
+  document.getElementById('saveBtn').textContent = 'حفظ الحالة ✓';
+  if(editSavedGroup){
+    currentGroup = editSavedGroup;
+    editSavedGroup = null;
+    renderGroupSelector();
+  }
+  resetForm();
+}
+
+// ---------- CSV export ----------
+function csvEscape(val){
+  const s = (val === undefined || val === null) ? '' : String(val);
+  if(/[",\n]/.test(s)){
+    return '"' + s.replace(/"/g, '""') + '"';
+  }
+  return s;
+}
+
+// ---------- robust file save/share (works reliably inside wrapped Android WebView apps) ----------
+// Plain blob: URL downloads (and even large data: URI downloads) often get stuck on a native
+// "Loading..." system dialog inside APK-wrapped WebViews, because the wrapper's handoff to the
+// OS download/share machinery either can't resolve a blob: URL outside the page, or times out on
+// very large payloads. Rather than gamble on that handoff working, we always fall back to an
+// in-page preview the user can save directly from — via the WebView's built-in long-press "save
+// image" menu, or by copying text — which works the same everywhere, wrapped app or not.
+let exportPreviewOverlayEl = null;
+function ensureExportPreviewOverlay(){
+  if(exportPreviewOverlayEl) return exportPreviewOverlayEl;
+  const el = document.createElement('div');
+  el.className = 'export-preview-overlay';
+  el.innerHTML = `
+    <div class="export-preview-head">
+      <h2 id="exportPreviewTitle"></h2>
+      <button type="button" class="export-preview-close" id="exportPreviewClose">✕</button>
+    </div>
+    <div class="export-preview-body" id="exportPreviewBody"></div>
+    <div class="export-preview-foot">
+      <p class="export-preview-hint" id="exportPreviewHint"></p>
+      <div class="export-preview-actions" id="exportPreviewActions"></div>
+    </div>`;
+  document.body.appendChild(el);
+  el.querySelector('#exportPreviewClose').addEventListener('click', closeExportPreview);
+  exportPreviewOverlayEl = el;
+  return el;
+}
+
+function closeExportPreview(){
+  if(!exportPreviewOverlayEl) return;
+  exportPreviewOverlayEl.classList.remove('in');
+  document.body.style.overflow = '';
+  setTimeout(()=> exportPreviewOverlayEl.classList.remove('show'), 200);
+}
+
+function openExportPreview({title, hint, bodyEl, actions}){
+  const el = ensureExportPreviewOverlay();
+  el.querySelector('#exportPreviewTitle').textContent = title;
+  el.querySelector('#exportPreviewHint').textContent = hint;
+  const bodyWrap = el.querySelector('#exportPreviewBody');
+  bodyWrap.innerHTML = '';
+  bodyWrap.appendChild(bodyEl);
+  const actionsWrap = el.querySelector('#exportPreviewActions');
+  actionsWrap.innerHTML = '';
+  actions.forEach(a=>{
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'btn ' + (a.primary ? 'btn-save' : 'btn-preview-secondary');
+    btn.textContent = a.label;
+    btn.addEventListener('click', a.onClick);
+    actionsWrap.appendChild(btn);
+  });
+  document.body.style.overflow = 'hidden';
+  el.classList.add('show');
+  requestAnimationFrame(()=> requestAnimationFrame(()=> el.classList.add('in')));
+}
+
+// try the native share sheet in the background; never blocks or throws up to the caller
+async function tryNativeShare(blob, filename, mimeType, shareTitle){
+  try{
+    if(navigator.canShare && window.File){
+      const file = new File([blob], filename, {type: mimeType});
+      if(navigator.canShare({files:[file]})){
+        await navigator.share({files:[file], title: shareTitle || filename});
+        return true;
+      }
+    }
+  }catch(err){ /* cancelled or unsupported — ignore, the on-screen preview is always available */ }
+  return false;
+}
+
+function showImageExportPreview(dataUrl, blob, filename, title){
+  const img = document.createElement('img');
+  img.src = dataUrl;
+  img.alt = title;
+  openExportPreview({
+    title,
+    hint: 'اضغطي "حفظ الصورة" لتنزيلها مباشرة، أو "مشاركة" لإرسالها مباشرة لتطبيق آخر',
+    bodyEl: img,
+    actions: [
+      { label: 'حفظ الصورة 💾', primary:true, onClick: ()=>{
+          const a = document.createElement('a');
+          a.href = dataUrl;
+          a.download = filename;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          showToast('تم إرسال أمر الحفظ — تحققي من إشعارات الهاتف أو مجلد التنزيلات');
+        } },
+      { label: 'مشاركة ⇪', primary:false, onClick: async ()=>{
+          const shared = await tryNativeShare(blob, filename, 'image/png', title);
+          if(!shared) showToast('المشاركة غير مدعومة هنا، جربي "حفظ الصورة"');
+        } },
+      { label: 'إغلاق', primary:false, onClick: closeExportPreview }
+    ]
+  });
+}
+
+function showTextExportPreview(text, blob, filename, title){
+  const textarea = document.createElement('textarea');
+  textarea.readOnly = true;
+  textarea.value = text;
+  openExportPreview({
+    title,
+    hint: 'اضغط "نسخ الكل" ثم الصق النص في تطبيق الملاحظات أو إكسل لحفظه',
+    bodyEl: textarea,
+    actions: [
+      { label: 'نسخ الكل 📋', primary:true, onClick: async ()=>{
+          textarea.focus();
+          textarea.select();
+          let copied = false;
+          try{
+            if(navigator.clipboard && navigator.clipboard.writeText){
+              await navigator.clipboard.writeText(text);
+              copied = true;
+            }
+          }catch(err){ /* fall back below */ }
+          if(!copied){
+            try{ copied = document.execCommand('copy'); }catch(err){ copied = false; }
+          }
+          showToast(copied ? 'تم نسخ النص' : 'حدد النص يدويًا وانسخه');
+        } },
+      { label: 'مشاركة ⇪', primary:false, onClick: async ()=>{
+          const shared = await tryNativeShare(blob, filename, 'text/csv', title);
+          if(!shared) showToast('استخدمي زر "نسخ الكل" بدلاً من ذلك');
+        } },
+      { label: 'إغلاق', primary:false, onClick: closeExportPreview }
+    ]
+  });
+}
+
+async function exportCsv(){
+  const cases = await loadAllCases();
+  if(cases.length === 0){
+    showToast('لا توجد سجلات لتصديرها بعد');
+    return;
+  }
+  const headers = ['المجموعة','الاسم','الجنسية','العمر','الجنس','التشخيص','الحالة','مكان النقل','رمز الفريق','الشفت','التاريخ'];
+  const rows = cases.map(c => [
+    groupLabel(c.group || GROUPS[0].id),
+    c.name, c.nationality, c.age, c.gender, c.diagnosis, c.status,
+    c.transferLocation, c.teamCode, c.shift, c.date
+  ].map(csvEscape).join(','));
+  const csvContent = '\uFEFF' + headers.map(csvEscape).join(',') + '\n' + rows.join('\n');
+
+  const blob = new Blob([csvContent], {type: 'text/csv;charset=utf-8;'});
+  const filename = `سجل_الحالات_الطبية_${todayStr()}.csv`;
+  showTextExportPreview(csvContent, blob, filename, 'سجل الحالات الطبية (CSV)');
+}
+
+// ---------- records list (view / edit / delete) ----------
+function buildNumberMap(cases){
+  const ascending = [...cases].sort((a,b)=> (a.createdAt||0) - (b.createdAt||0));
+  const map = {};
+  ascending.forEach((c, idx)=>{ map[c.key] = idx + 1; });
+  return map;
+}
+
+function statusClass(status){
+  if(status === 'شفاء') return 'status-healed';
+  if(status === 'نقل') return 'status-transfer';
+  if(status === 'رفض') return 'status-rejected';
+  return '';
+}
+
+function renderRecordCard(c, num){
+  return `
+    <div class="record-card">
+      <div class="record-top">
+        <div class="record-name-wrap">
+          <span class="record-name">${escapeHtml(c.name || '—')}</span>
+          <span class="record-badge">#${num}</span>
+        </div>
+        <span class="record-date">${escapeHtml(c.date || '')}</span>
+      </div>
+      <div class="record-diagnosis"><b>التشخيص:</b> ${escapeHtml(c.diagnosis || '—')}</div>
+      <div class="record-tags">
+        <span class="tag-chip group-tag">${escapeHtml(groupLabel(c.group || GROUPS[0].id))}</span>
+        <span class="tag-chip ${statusClass(c.status)}">${escapeHtml(c.status || '—')}</span>
+        <span class="tag-chip">النقطة: ${escapeHtml(c.teamCode || '—')}</span>
+        <span class="tag-chip">${escapeHtml(c.shift || '—')}</span>
+      </div>
+      <div class="record-actions">
+        <button class="btn-small btn-edit" data-action="edit" data-key="${escapeHtml(c.key)}">تعديل ✎</button>
+        <button class="btn-small btn-delete" data-action="delete" data-key="${escapeHtml(c.key)}">حذف 🗑</button>
+      </div>
+    </div>`;
+}
+
+// event delegation for record card buttons — avoids inlining raw case keys into
+// onclick="..." strings, which would be unsafe if a key ever came from imported data
+document.addEventListener('click', (e)=>{
+  const btn = e.target.closest('[data-action][data-key]');
+  if(!btn) return;
+  const key = btn.getAttribute('data-key');
+  if(btn.dataset.action === 'edit') editCase(key);
+  else if(btn.dataset.action === 'delete') deleteCase(key);
+});
+
+async function loadAndRenderRecords(){
+  const container = document.getElementById('recordsContent');
+  container.innerHTML = `<div class="loading-row"><div class="spinner"></div> جارِ تحميل السجلات...</div>`;
+
+  const allCases = await loadAllCases();
+  cachedRecords = allCases;
+  const cases = filterCasesByGroup(allCases, recordsActiveGroup)
+    .filter(c => recordsActiveShift === 'all' || c.shift === recordsActiveShift);
+  document.getElementById('recordsCount').textContent = cases.length;
+  await refreshSavedCount();
+
+  if(cases.length === 0){
+    const scopeParts = [];
+    if(recordsActiveGroup !== 'all') scopeParts.push(groupLabel(recordsActiveGroup));
+    if(recordsActiveShift !== 'all') scopeParts.push('شفت ' + recordsActiveShift);
+    const scopeMsg = scopeParts.length ? ' في ' + escapeHtml(scopeParts.join(' - ')) : '';
+    container.innerHTML = `
+      <div class="card">
+        <div class="empty-state">
+          <div class="emoji">📋</div>
+          <p>لا توجد سجلات محفوظة بعد${scopeMsg}.<br>سجّل أول حالة من تبويب "تسجيل حالة".</p>
+        </div>
+      </div>`;
+    return;
+  }
+
+  const numberMap = buildNumberMap(allCases);
+  container.innerHTML = cases.map(c => renderRecordCard(c, numberMap[c.key])).join('');
+}
+
+function editCase(key){
+  const record = cachedRecords.find(c => c.key === key);
+  if(!record){
+    showToast('تعذّر العثور على هذه الحالة');
+    return;
+  }
+
+  document.getElementById('f-name').value = record.name || '';
+  setSelectValue('f-nationality', record.nationality || '');
+  document.getElementById('f-age').value = record.age || '';
+  setRadioGroupValue(genderGroup, 'gender', record.gender || '');
+  setSelectValue('f-diagnosis', record.diagnosis || '');
+  document.getElementById('f-team-code').value = record.teamCode || '';
+  setRadioGroupValue(shiftGroup, 'shift', record.shift || '');
+  document.getElementById('f-date').value = record.date || todayStr();
+  document.getElementById('f-transfer-location').value = record.transferLocation || '';
+
+  statusGroup.querySelectorAll('input[name="status"]').forEach(i=> i.checked = (i.value === record.status));
+  statusGroup.querySelectorAll('.radio-option').forEach(opt=> opt.classList.toggle('checked', opt.dataset.value === record.status));
+
+  if(editSavedGroup === null) editSavedGroup = currentGroup;
+  currentGroup = (record.group && GROUPS.some(g=>g.id===record.group)) ? record.group : GROUPS[0].id;
+  renderGroupSelector();
+
+  editingKey = key;
+  const numberMap = buildNumberMap(cachedRecords);
+  document.getElementById('editBannerNum').textContent = numberMap[key] || '';
+  document.getElementById('editBanner').style.display = 'flex';
+  document.getElementById('saveBtn').textContent = 'تحديث الحالة ✓';
+
+  switchTab('form');
+  window.scrollTo({top: 0, behavior: 'smooth'});
+}
+
+async function deleteCase(key){
+  const record = cachedRecords.find(c => c.key === key);
+  const label = record ? (record.name || 'هذه الحالة') : 'هذه الحالة';
+  const confirmed = confirm(`هل أنت متأكد من حذف حالة "${label}"؟ لا يمكن التراجع عن هذا الإجراء.`);
+  if(!confirmed) return;
+
+  try{
+    await window.storage.delete(key, true);
+    vibrateLight();
+    showToast('تم حذف الحالة');
+    if(editingKey === key){
+      cancelEdit();
+    }
+    await loadAndRenderRecords();
+    await refreshSavedCount();
+  }catch(e){
+    console.error('deleteCase error', e);
+    showToast('تعذّر حذف الحالة، حاول مرة أخرى');
+  }
+}
+
+async function resetStats(){
+  const allCases = (cachedCases && cachedCases.length) ? cachedCases : await loadAllCases();
+  const cases = filterCasesByGroup(allCases, statsActiveGroup);
+  if(!cases || cases.length === 0){
+    showToast('لا توجد حالات لحذفها');
+    return;
+  }
+
+  const scopeLabel = statsActiveGroup === 'all' ? 'جميع المجموعات' : groupLabel(statsActiveGroup);
+  const confirmed = confirm(`هل أنت متأكد من حذف حالات "${scopeLabel}" (${cases.length})؟ سيتم تصفير إحصائيات هذا القسم ولا يمكن التراجع عن هذا الإجراء.`);
+  if(!confirmed) return;
+
+  const resetBtn = document.getElementById('resetStatsBtn');
+  if(resetBtn){
+    resetBtn.disabled = true;
+    resetBtn.textContent = 'جارِ الحذف...';
+  }
+
+  try{
+    for(const c of cases){
+      try{ await window.storage.delete(c.key, true); }catch(e){ /* skip failed delete */ }
+    }
+    cachedCases = (cachedCases || []).filter(c => !cases.includes(c));
+    cachedRecords = (cachedRecords || []).filter(c => !cases.includes(c));
+    showToast('تم حذف الاحصائيات ' + scopeLabel);
+    await refreshSavedCount();
+    await loadAndRenderStats();
+  }catch(e){
+    console.error('resetStats error', e);
+    showToast('تعذّر حذف الإحصائيات، حاول مرة أخرى');
+  }finally{
+    if(resetBtn){
+      resetBtn.disabled = false;
+      resetBtn.textContent = 'حذف الإحصائيات 🗑';
+    }
+  }
+}
+
+// ---------- stats ----------
+function countBy(arr, key){
+  const map = {};
+  arr.forEach(item=>{
+    const raw = (item[key] || '').toString().trim();
+    const label = raw || 'غير محدد';
+    map[label] = (map[label] || 0) + 1;
+  });
+  return Object.entries(map).sort((a,b)=> b[1]-a[1]);
+}
+
+function renderBarList(entries, emptyMsg){
+  if(entries.length === 0){
+    return `<div class="bar-list"><div class="empty-state"><p>${emptyMsg}</p></div></div>`;
+  }
+  const max = Math.max(...entries.map(e=>e[1]));
+  const rows = entries.map(([label, count])=>{
+    const pct = Math.round((count/max)*100);
+    return `
+      <div class="bar-row">
+        <div class="bar-row-top">
+          <span class="bar-row-name">${escapeHtml(label)}</span>
+          <span class="bar-row-count">${count}</span>
+        </div>
+        <div class="bar-track"><div class="bar-fill" style="width:${pct}%"></div></div>
+      </div>`;
+  }).join('');
+  return `<div class="bar-list">${rows}</div>`;
+}
+
+function escapeHtml(s){
+  return s.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+const STATUS_COLOR_MAP = {'شفاء':'#2f5a8a','نقل':'#a9761e','رفض':'#c1443a'};
+const STATUS_EXTRA_PALETTE = ['#4a7fb8','#7a4fa0','#c2703d','#2f8f8f','#b8556b','#5c8a3a'];
+const DIAGNOSIS_PALETTE = ['#2f5a8a','#b8862e','#c1443a','#3f8f7a','#7c5cbf','#5c8a3a','#4a7fb8','#c2703d'];
+const DIAGNOSIS_OTHER_COLOR = '#6b7686';
+
+function buildDiagnosisChartData(cases, maxSlices){
+  const counts = countBy(cases, 'diagnosis');
+  const top = counts.slice(0, maxSlices);
+  const restCount = counts.slice(maxSlices).reduce((s,[,c])=> s+c, 0);
+  const data = top.map(([label,count], i)=>({
+    label, count, color: DIAGNOSIS_PALETTE[i % DIAGNOSIS_PALETTE.length]
+  }));
+  if(restCount > 0){
+    data.push({label:'أخرى', count: restCount, color: DIAGNOSIS_OTHER_COLOR});
+  }
+  return data;
+}
+
+function buildDonutSvg(data, size, strokeWidth){
+  const r = (size - strokeWidth) / 2;
+  const cx = size/2, cy = size/2;
+  const circumference = 2 * Math.PI * r;
+  const total = data.reduce((s,d)=> s+d.count, 0);
+  let cumulative = 0;
+  const segments = data.map(d=>{
+    const len = total > 0 ? (d.count/total) * circumference : 0;
+    const dashoffset = -cumulative;
+    cumulative += len;
+    return `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${d.color}" stroke-width="${strokeWidth}" stroke-dasharray="${len} ${circumference-len}" stroke-dashoffset="${dashoffset}" transform="rotate(-90 ${cx} ${cy})"></circle>`;
+  }).join('');
+  return `<svg viewBox="0 0 ${size} ${size}" width="${size}" height="${size}">
+    <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="#eaf1f8" stroke-width="${strokeWidth}"></circle>
+    ${segments}
+  </svg>`;
+}
+
+function renderDonutCard(data, centerLabel, emptyMsg){
+  const total = data.reduce((s,d)=> s+d.count, 0);
+  if(total === 0){
+    return `<div class="card"><div class="empty-state"><p>${emptyMsg}</p></div></div>`;
+  }
+  const svg = buildDonutSvg(data, 168, 20);
+  const legend = data.map(d=>{
+    const pct = Math.round((d.count/total)*100);
+    return `
+      <div class="donut-legend-row">
+        <span class="donut-legend-dot" style="background:${d.color}"></span>
+        <span class="donut-legend-label">${escapeHtml(d.label)}</span>
+        <span class="donut-legend-value">${d.count}</span>
+        <span class="donut-legend-pct" style="background:${d.color}">${pct}%</span>
+      </div>`;
+  }).join('');
+  return `
+    <div class="card donut-card">
+      <div class="donut-chart-holder">
+        ${svg}
+        <div class="donut-center">
+          <div class="donut-center-num">${total}</div>
+          <div class="donut-center-label">${escapeHtml(centerLabel)}</div>
+        </div>
+      </div>
+      <div class="donut-legend">${legend}</div>
+    </div>`;
+}
+
+function renderStatusTiles(data){
+  if(data.length === 0){
+    return `<div class="card"><div class="empty-state"><p>لا توجد بيانات حالة بعد.</p></div></div>`;
+  }
+  const total = data.reduce((s,d)=> s+d.count, 0);
+  const tiles = data.map(d=>{
+    const pct = total > 0 ? Math.round((d.count/total)*100) : 0;
+    return `
+    <div class="stat-tile status-square">
+      <div class="stat-num" style="color:${d.color};">${d.count}</div>
+      <div class="stat-label">${escapeHtml(d.label)}</div>
+      <div class="status-square-pct" style="background:${d.color}">${pct}%</div>
+    </div>`;
+  }).join('');
+  return `<div class="stat-grid status-grid">${tiles}</div>`;
+}
+
+function renderDiagnosisDonut(cases){
+  const data = buildDiagnosisChartData(cases, 8);
+  return renderDonutCard(data, 'إجمالي الحالات', 'لا توجد تشخيصات مسجّلة بعد.');
+}
+
+async function loadAndRenderStats(){
+  const container = document.getElementById('statsContent');
+  container.innerHTML = `<div class="loading-row"><div class="spinner"></div> جارِ تحميل البيانات...</div>`;
+
+  const allCases = await loadAllCases();
+  cachedCases = allCases;
+  await refreshSavedCount();
+
+  const cases = filterCasesByGroup(allCases, statsActiveGroup);
+
+  if(cases.length === 0){
+    const scopeMsg = statsActiveGroup==='all' ? 'لا توجد حالات مسجّلة بعد.' : `لا توجد حالات مسجّلة بعد في ${escapeHtml(groupLabel(statsActiveGroup))}.`;
+    container.innerHTML = `
+      <div class="card">
+        <div class="empty-state">
+          <div class="emoji">📋</div>
+          <p>${scopeMsg}<br>ابدأ بتسجيل أول حالة من التبويب المجاور.</p>
+        </div>
+      </div>`;
+    return;
+  }
+
+  const total = cases.length;
+  let extraIdx = 0;
+  const byStatus = countBy(cases, 'status');
+  const statusData = byStatus.map(([label,count])=>{
+    const color = STATUS_COLOR_MAP[label] || STATUS_EXTRA_PALETTE[extraIdx++ % STATUS_EXTRA_PALETTE.length];
+    return {label, count, color};
+  });
+
+  const byTeam = countBy(cases, 'teamCode');
+  const scopeLabel = statsActiveGroup === 'all' ? 'كل المجموعات' : groupLabel(statsActiveGroup);
+
+  container.innerHTML = `
+    <div class="stat-tile total" style="margin-bottom:16px;">
+      <div>
+        <div class="stat-num">${total}</div>
+        <div class="stat-label">إجمالي عدد الحالات — ${escapeHtml(scopeLabel)}</div>
+      </div>
+    </div>
+
+    <div class="section-title">التوزيع حسب الحالة</div>
+    ${renderStatusTiles(statusData)}
+
+    <div class="section-title">عدد الحالات حسب التشخيص</div>
+    ${renderDiagnosisDonut(cases)}
+
+    <div class="section-title">عدد الحالات حسب النقطة </div>
+    ${renderBarList(byTeam, 'لا توجد نقاط مسجّلة بعد.')}
+  `;
+}
+
+// ---------- professional stats report (canvas-based, offline, no external libs) ----------
+function roundRect(ctx, x, y, w, h, r){
+  ctx.beginPath();
+  ctx.moveTo(x+r, y);
+  ctx.arcTo(x+w, y, x+w, y+h, r);
+  ctx.arcTo(x+w, y+h, x, y+h, r);
+  ctx.arcTo(x, y+h, x, y, r);
+  ctx.arcTo(x, y, x+w, y, r);
+  ctx.closePath();
+}
+
+function truncateCanvasText(ctx, text, maxWidth){
+  if(ctx.measureText(text).width <= maxWidth) return text;
+  let t = text;
+  while(t.length > 1 && ctx.measureText(t+'…').width > maxWidth){
+    t = t.slice(0, -1);
+  }
+  return t + '…';
+}
+
+function drawTilesRowV2(ctx, x, y, width, tiles, tileH){
+  const gap = 8;
+  const n = tiles.length;
+  const tileW = (width - gap*(n-1)) / n;
+  tiles.forEach((t, i)=>{
+    const tx = x + width - (i+1)*tileW - i*gap; // rtl: first tile (total) sits at the right
+    roundRect(ctx, tx+0.5, y+0.5, tileW-1, tileH-1, 10);
+    ctx.fillStyle = '#fbfcfd';
+    ctx.fill();
+    ctx.strokeStyle = '#e3e7ee';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+
+    const cx = tx + tileW/2;
+    // tiles with a percentage pill keep their original top-anchored layout
+    // (room is reserved below for the pill); the total tile has no pill,
+    // so its value+label block is centered vertically in the box instead.
+    let cy = t.pct !== undefined ? y + 9 : y + (tileH - 30) / 2;
+
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'alphabetic';
+    ctx.font = '900 17px Arial, sans-serif';
+    ctx.fillStyle = t.color;
+    cy += 17*0.78;
+    ctx.fillText(String(t.value), cx, cy);
+    cy += 17*0.36 + 2;
+
+    ctx.font = '700 9px Arial, sans-serif';
+    ctx.fillStyle = '#6b7686';
+    cy += 9*0.78;
+    ctx.fillText(truncateCanvasText(ctx, t.label, tileW-6), cx, cy);
+
+    if(t.pct !== undefined){
+      cy += 9*0.3 + 5;
+      const pillText = t.pct + '%';
+      ctx.font = '800 9px Arial, sans-serif';
+      const pillW = Math.max(ctx.measureText(pillText).width + 16, 30);
+      const pillH = 14;
+      roundRect(ctx, cx-pillW/2, cy, pillW, pillH, pillH/2);
+      ctx.fillStyle = t.color;
+      ctx.fill();
+      ctx.fillStyle = '#ffffff';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(pillText, cx, cy+pillH/2+0.5);
+      ctx.textBaseline = 'alphabetic';
+    }
+  });
+}
+
+function drawDonutRingV2(ctx, cx, cy, radius, innerRadius, data){
+  const total = data.reduce((s,d)=>s+d.count,0);
+  let startAngle = -Math.PI/2;
+  const sliceInfo = [];
+  data.forEach(d=>{
+    const sliceAngle = total>0 ? (d.count/total)*Math.PI*2 : 0;
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.arc(cx, cy, radius, startAngle, startAngle+sliceAngle);
+    ctx.closePath();
+    ctx.fillStyle = d.color;
+    ctx.fill();
+    sliceInfo.push({startAngle, sliceAngle, count:d.count});
+    startAngle += sliceAngle;
+  });
+  ctx.beginPath();
+  ctx.arc(cx, cy, innerRadius, 0, Math.PI*2);
+  ctx.fillStyle = '#ffffff';
+  ctx.fill();
+
+  const midR = (radius+innerRadius)/2;
+  sliceInfo.forEach(s=>{
+    const pct = total>0 ? Math.round((s.count/total)*100) : 0;
+    if(pct<=0 || s.sliceAngle < 0.25) return; // skip labels on slivers too thin to fit text
+    const midAngle = s.startAngle + s.sliceAngle/2;
+    const lx = cx + Math.cos(midAngle)*midR;
+    const ly = cy + Math.sin(midAngle)*midR;
+    ctx.font = '900 8px Arial, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillStyle = '#ffffff';
+    ctx.shadowColor = 'rgba(0,0,0,0.45)';
+    ctx.shadowBlur = 2.5;
+    ctx.fillText(pct+'%', lx, ly);
+    ctx.shadowBlur = 0;
+  });
+}
+
+function drawLegendV2(ctx, rightX, y, width, data){
+  const rowH = 19;
+  const dotSize = 9;
+  const gap1 = 7, gap2 = 10, gap3 = 6;
+  const total = data.reduce((s,d)=>s+d.count,0);
+
+  // fixed column widths so every row's label/percentage/count line up like table fields
+  ctx.font = '800 9.5px Arial, sans-serif';
+  const countPillW = Math.max(...data.map(d=> ctx.measureText(String(d.count)).width + 14), 22);
+  ctx.font = '700 8.5px Arial, sans-serif';
+  const pctColW = Math.max(...data.map(d=>{
+    const pct = total>0 ? Math.round((d.count/total)*100) : 0;
+    return ctx.measureText(pct+'%').width;
+  }), ctx.measureText('100%').width);
+
+  const maxAvailableLabelW = width - dotSize - gap1 - pctColW - gap2 - countPillW - gap3;
+  ctx.font = '600 10px Arial, sans-serif';
+  const neededLabelW = Math.max(...data.map(d=> ctx.measureText(d.label).width));
+  const labelColW = Math.min(Math.max(neededLabelW, 30), Math.max(maxAvailableLabelW, 30));
+
+  const labelRightX = rightX - dotSize - gap1;
+  const pctRightX = labelRightX - labelColW - gap2;
+  const pillX = pctRightX - pctColW - gap3 - countPillW;
+
+  data.forEach((d,i)=>{
+    const rowY = y + i*rowH + 4;
+
+    ctx.fillStyle = d.color;
+    roundRect(ctx, rightX-dotSize, rowY-dotSize/2, dotSize, dotSize, 3);
+    ctx.fill();
+
+    ctx.font = '600 10px Arial, sans-serif';
+    const label = truncateCanvasText(ctx, d.label, labelColW);
+    ctx.fillStyle = '#1c2530';
+    ctx.textAlign = 'right';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(label, labelRightX, rowY);
+
+    const pct = total>0 ? Math.round((d.count/total)*100) : 0;
+    ctx.fillStyle = '#6b7686';
+    ctx.font = '700 8.5px Arial, sans-serif';
+    ctx.textAlign = 'right';
+    ctx.fillText(pct+'%', pctRightX, rowY);
+
+    const countPillH = 13;
+    const pillY = rowY - countPillH/2;
+    roundRect(ctx, pillX, pillY, countPillW, countPillH, countPillH/2);
+    ctx.fillStyle = d.color;
+    ctx.fill();
+    ctx.fillStyle = '#ffffff';
+    ctx.font = '800 9.5px Arial, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(String(d.count), pillX+countPillW/2, rowY+0.5);
+  });
+}
+
+function buildStatsReportCanvas(reportData){
+  const {total, diagnosisData, statusData, scopeLabel} = reportData;
+
+  // layout constants mirror the approved compact-card export template
+  const CARD_W = 420;
+  const PAD_X = 18;
+  const PAD_TOP = 28;
+  const PAD_BOTTOM = 28;
+  const CARD_RADIUS = 14;
+
+  const headerH = 100;
+  const padT = 16, padX = 18, padB = 16;
+  const contentW = CARD_W - padX*2;
+
+  const secTitleH = 25;
+  const tileH = 72;
+  const tilesRowMarginBottom = 14;
+
+  const donutSize = 88;
+  const legendRowH = 19;
+  const legendH = Math.max(diagnosisData.length, 1) * legendRowH;
+  const donutLegendRowH = Math.max(donutSize, legendH);
+
+  const footerH = 33;
+
+  const cardH = headerH + padT + secTitleH + tileH + tilesRowMarginBottom
+              + secTitleH + donutLegendRowH + padB + footerH;
+
+  const W = PAD_X*2 + CARD_W;
+  const H = PAD_TOP + cardH + PAD_BOTTOM;
+
+  // render at a high, but safe, pixel density — see note on wrapped-APK export
+  // size limits further down (same reasoning as the previous version).
+  const SCALE = Math.max(3, Math.round((1500 / W) * 10) / 10);
+
+  const canvas = document.createElement('canvas');
+  canvas.width = Math.round(W * SCALE);
+  canvas.height = Math.round(H * SCALE);
+  const ctx = canvas.getContext('2d');
+  ctx.scale(SCALE, SCALE);
+  ctx.imageSmoothingEnabled = true;
+  ctx.imageSmoothingQuality = 'high';
+
+  ctx.fillStyle = '#eef1f6';
+  ctx.fillRect(0, 0, W, H);
+
+  const cardX = PAD_X, cardY = PAD_TOP;
+
+  ctx.save();
+  roundRect(ctx, cardX, cardY, CARD_W, cardH, CARD_RADIUS);
+  ctx.clip();
+
+  ctx.fillStyle = '#ffffff';
+  ctx.fillRect(cardX, cardY, CARD_W, cardH);
+
+  // ---- header ----
+  const headGrad = ctx.createLinearGradient(cardX, cardY, cardX+CARD_W, cardY+headerH);
+  headGrad.addColorStop(0, '#2f5a8a');
+  headGrad.addColorStop(1, '#073d21');
+  ctx.fillStyle = headGrad;
+  ctx.fillRect(cardX, cardY, CARD_W, headerH);
+
+  let hy = cardY + 18;
+  ctx.textAlign = 'right';
+  ctx.textBaseline = 'alphabetic';
+  ctx.font = '900 16px Arial, sans-serif';
+  ctx.fillStyle = '#ffffff';
+  hy += 16*0.78;
+  ctx.fillText('تقرير الإحصائيات', cardX+CARD_W-18, hy);
+  hy += 16*0.3 + 4;
+
+  ctx.font = '500 10px Arial, sans-serif';
+  ctx.fillStyle = 'rgba(255,255,255,0.85)';
+  hy += 10*0.78;
+  ctx.fillText('منظمة آمنون للإغاثة والتنمية', cardX+CARD_W-18, hy);
+  hy += 10*0.3 + 8;
+
+  ctx.strokeStyle = 'rgba(255,255,255,0.22)';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(cardX+18, hy);
+  ctx.lineTo(cardX+CARD_W-18, hy);
+  ctx.stroke();
+  hy += 8;
+
+  ctx.font = '700 9px Arial, sans-serif';
+  ctx.fillStyle = '#f7efdd';
+  ctx.textAlign = 'right';
+  ctx.fillText('المجموعة: ' + (scopeLabel || 'كل المجموعات'), cardX+CARD_W-18, hy+9*0.78);
+
+  ctx.font = '600 9px Arial, sans-serif';
+  ctx.fillStyle = 'rgba(255,255,255,0.9)';
+  ctx.textAlign = 'left';
+  ctx.fillText(todayStr().replace(/-/g,'/'), cardX+18, hy+9*0.78);
+
+  // ---- body ----
+  let by = cardY + headerH + padT;
+
+  ctx.textAlign = 'right';
+  ctx.fillStyle = '#16324f';
+  ctx.font = '800 11.5px Arial, sans-serif';
+  ctx.fillText('التوزيع حسب الحالة', cardX+CARD_W-padX, by+11.5*0.78);
+  by += secTitleH;
+
+  const statusTiles = [
+    {label:'إجمالي', value: total, color:'#16324f'},
+    ...statusData.map(d=>({
+      label:d.label, value:d.count, color:d.color,
+      pct: total > 0 ? Math.round((d.count/total)*100) : 0
+    }))
+  ];
+  drawTilesRowV2(ctx, cardX+padX, by, contentW, statusTiles, tileH);
+  by += tileH + tilesRowMarginBottom;
+
+  ctx.textAlign = 'right';
+  ctx.fillStyle = '#16324f';
+  ctx.font = '800 11.5px Arial, sans-serif';
+  ctx.fillText('حسب التشخيص', cardX+CARD_W-padX, by+11.5*0.78);
+  by += secTitleH;
+
+  const donutCx = cardX + CARD_W - padX - donutSize/2;
+  const donutCy = by + donutLegendRowH/2;
+  drawDonutRingV2(ctx, donutCx, donutCy, donutSize/2, donutSize/2-22, diagnosisData);
+
+  const legendRightX = donutCx - donutSize/2 - 26;
+  const legendW = legendRightX - (cardX+padX);
+  const legendY = by + (donutLegendRowH - legendH)/2;
+  drawLegendV2(ctx, legendRightX, legendY, legendW, diagnosisData);
+
+  by += donutLegendRowH + padB;
+
+  // ---- footer ----
+  ctx.textAlign = 'center';
+  ctx.fillStyle = '#6b7686';
+  ctx.font = '700 9.5px Arial, sans-serif';
+  ctx.fillText('تم إنشاء هذا التقرير من قبل منظمة آمنون للإغاثة والتنمية', cardX+CARD_W/2, by+10+9.5*0.78);
+
+  ctx.restore();
+
+  return canvas;
+}
+
+async function exportStatsReport(){
+  const allCases = (cachedCases && cachedCases.length) ? cachedCases : await loadAllCases();
+  const cases = filterCasesByGroup(allCases, statsActiveGroup);
+  if(!cases || cases.length === 0){
+    showToast('لا توجد بيانات لتصديرها بعد');
+    return;
+  }
+
+  const total = cases.length;
+  const scopeLabel = statsActiveGroup === 'all' ? 'كل المجموعات' : groupLabel(statsActiveGroup);
+  const fileScope = statsActiveGroup === 'all' ? 'كل_المجموعات' : groupLabel(statsActiveGroup).replace(/\s+/g,'_');
+
+  const diagnosisData = buildDiagnosisChartData(cases, 5);
+
+  let extraIdx = 0;
+  const byStatus = countBy(cases, 'status');
+  const statusData = byStatus.map(([label,count])=>{
+    const color = STATUS_COLOR_MAP[label] || STATUS_EXTRA_PALETTE[extraIdx++ % STATUS_EXTRA_PALETTE.length];
+    return {label, count, color};
+  });
+
+  const canvas = buildStatsReportCanvas({total, diagnosisData, statusData, scopeLabel});
+
+  canvas.toBlob(blob=>{
+    if(!blob){ showToast('تعذّر إنشاء التقرير'); return; }
+    const filename = `تقرير_الإحصائيات_${fileScope}_${todayStr()}.png`;
+    const dataUrl = canvas.toDataURL('image/png');
+    showImageExportPreview(dataUrl, blob, filename, 'تقرير إحصائيات ' + scopeLabel);
+  }, 'image/png');
+}
+
+async function exportCasesExcel(){
+  const allCases = (cachedCases && cachedCases.length) ? cachedCases : await loadAllCases();
+  const cases = filterCasesByGroup(allCases, statsActiveGroup);
+  if(!cases || cases.length === 0){
+    showToast('لا توجد بيانات لتصديرها بعد');
+    return;
+  }
+  if(!window.XLSX){
+    showToast('يلزم اتصال إنترنت لتجهيز ملف Excel أول مرة');
+    return;
+  }
+
+  const scopeLabel = statsActiveGroup === 'all' ? 'كل المجموعات' : groupLabel(statsActiveGroup);
+  const fileScope = statsActiveGroup === 'all' ? 'كل_المجموعات' : groupLabel(statsActiveGroup).replace(/\s+/g,'_');
+
+  // ترتيب السجل من الأحدث إلى الأقدم
+  const sorted = [...cases].sort((a,b)=> (b.createdAt||0) - (a.createdAt||0));
+
+  // ---------- شيت 1: سجل الحالات (مرقّم ومرتّب) ----------
+  const logHeader = ['م','التاريخ','الاسم','الجنسية','العمر','الجنس','التشخيص','الحالة','مكان النقل','الوردية','رمز الفريق','المجموعة'];
+  const logRows = sorted.map((c, i) => ([
+    i+1,
+    c.date || '',
+    c.name || '',
+    c.nationality || '',
+    c.age || '',
+    c.gender || '',
+    c.diagnosis || '',
+    c.status || '',
+    c.transferLocation || '',
+    c.shift || '',
+    c.teamCode || '',
+    groupLabel(c.group || GROUPS[0].id)
+  ]));
+  const logSheet = XLSX.utils.aoa_to_sheet([logHeader, ...logRows]);
+  logSheet['!cols'] = [
+    {wch:5},{wch:12},{wch:20},{wch:14},{wch:7},{wch:8},
+    {wch:22},{wch:10},{wch:16},{wch:10},{wch:12},{wch:16}
+  ];
+  logSheet['!views'] = [{rightToLeft:true, state:'frozen', ySplit:1}];
+  logSheet['!autofilter'] = {ref: `A1:${XLSX.utils.encode_col(logHeader.length-1)}${logRows.length+1}`};
+
+  // ---------- شيت 2: سجل إحصائي (جداول ملخّصة جاهزة لعمل دائرة إحصائية) ----------
+  const byDiagnosis = countBy(sorted, 'diagnosis');
+  const byStatus = countBy(sorted, 'status');
+  const byGroup = countBy(sorted, 'group');
+  const total = sorted.length;
+
+  const statsAoa = [
+    ['السجل الإحصائي — ' + scopeLabel],
+    [],
+    ['إجمالي عدد الحالات', total],
+    [],
+    ['التشخيص', 'عدد الحالات', 'النسبة %'],
+    ...byDiagnosis.map(([label,count]) => [label, count, Math.round((count/total)*1000)/10]),
+    [],
+    ['الحالة (شفاء/نقل/رفض)', 'عدد الحالات', 'النسبة %'],
+    ...byStatus.map(([label,count]) => [label, count, Math.round((count/total)*1000)/10]),
+    [],
+    ['المجموعة', 'عدد الحالات', 'النسبة %'],
+    ...byGroup.map(([label,count]) => [label, count, Math.round((count/total)*1000)/10]),
+    [],
+    ['↑ لعمل دائرة إحصائية: حددي أي جدول أعلاه (عمودي الاسم والعدد) ثم Insert > Chart > Pie']
+  ];
+  const statsSheet = XLSX.utils.aoa_to_sheet(statsAoa);
+  statsSheet['!cols'] = [{wch:26},{wch:14},{wch:12}];
+  statsSheet['!views'] = [{rightToLeft:true}];
+
+  const workbook = XLSX.utils.book_new();
+  workbook.Workbook = { Views: [{RTL:true}] };
+  XLSX.utils.book_append_sheet(workbook, logSheet, 'سجل الحالات');
+  XLSX.utils.book_append_sheet(workbook, statsSheet, 'السجل الإحصائي');
+  const wbout = XLSX.write(workbook, {bookType:'xlsx', type:'array'});
+  const blob = new Blob([wbout], {type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
+  const filename = `بيانات_الحالات_${fileScope}_${todayStr()}.xlsx`;
+  showExcelExportPreview(blob, filename, 'ملف Excel — ' + scopeLabel);
+}
+
+function showExcelExportPreview(blob, filename, title){
+  const wrap = document.createElement('div');
+  wrap.style.cssText = 'display:flex;flex-direction:column;align-items:center;gap:14px;color:#fff;padding:30px 16px;';
+  const nameEl = document.createElement('div');
+  nameEl.style.cssText = 'font-size:13.5px;font-weight:700;text-align:center;direction:ltr;word-break:break-all;';
+  nameEl.textContent = filename;
+  const iconEl = document.createElement('div');
+  iconEl.style.cssText = 'font-size:64px;line-height:1;';
+  iconEl.textContent = '📊';
+  wrap.appendChild(iconEl);
+  wrap.appendChild(nameEl);
+
+  openExportPreview({
+    title,
+    hint: 'اضغطي "حفظ Excel" لتنزيله مباشرة، أو "مشاركة" لإرساله لتطبيق آخر (واتساب، درايف...)',
+    bodyEl: wrap,
+    actions: [
+      { label: 'حفظ Excel 💾', primary:true, onClick: async ()=>{
+          const dataUrl = await blobToDataUrl(blob);
+          const a = document.createElement('a');
+          a.href = dataUrl;
+          a.download = filename;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          showToast('تم إرسال أمر الحفظ — تحققي من إشعارات الهاتف أو مجلد التنزيلات');
+        } },
+      { label: 'مشاركة ⇪', primary:false, onClick: async ()=>{
+          const shared = await tryNativeShare(blob, filename, 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', title);
+          if(!shared) showToast('المشاركة غير مدعومة هنا، جربي "حفظ Excel"');
+        } },
+      { label: 'إغلاق', primary:false, onClick: closeExportPreview }
+    ]
+  });
+}
+
+async function exportStatsReportPdf(){
+  const allCases = (cachedCases && cachedCases.length) ? cachedCases : await loadAllCases();
+  const cases = filterCasesByGroup(allCases, statsActiveGroup);
+  if(!cases || cases.length === 0){
+    showToast('لا توجد بيانات لتصديرها بعد');
+    return;
+  }
+  if(!window.jspdf || !window.jspdf.jsPDF){
+    showToast('يلزم اتصال إنترنت لتجهيز PDF أول مرة');
+    return;
+  }
+
+  const total = cases.length;
+  const scopeLabel = statsActiveGroup === 'all' ? 'كل المجموعات' : groupLabel(statsActiveGroup);
+  const fileScope = statsActiveGroup === 'all' ? 'كل_المجموعات' : groupLabel(statsActiveGroup).replace(/\s+/g,'_');
+
+  const diagnosisData = buildDiagnosisChartData(cases, 5);
+  let extraIdx = 0;
+  const byStatus = countBy(cases, 'status');
+  const statusData = byStatus.map(([label,count])=>{
+    const color = STATUS_COLOR_MAP[label] || STATUS_EXTRA_PALETTE[extraIdx++ % STATUS_EXTRA_PALETTE.length];
+    return {label, count, color};
+  });
+
+  const canvas = buildStatsReportCanvas({total, diagnosisData, statusData, scopeLabel});
+  const imgData = canvas.toDataURL('image/jpeg', 0.92);
+
+  const { jsPDF } = window.jspdf;
+  const pdf = new jsPDF({
+    orientation: canvas.width >= canvas.height ? 'landscape' : 'portrait',
+    unit: 'px',
+    format: [canvas.width, canvas.height],
+    compress: true
+  });
+  pdf.addImage(imgData, 'JPEG', 0, 0, canvas.width, canvas.height);
+  const pdfBlob = pdf.output('blob');
+  const filename = `تقرير_الإحصائيات_${fileScope}_${todayStr()}.pdf`;
+  sessionStorage.setItem('pdf-backup-done', '1');
+  showPdfExportPreview(pdfBlob, filename, 'تقرير إحصائيات ' + scopeLabel + ' (PDF)');
+}
+
+function showPdfExportPreview(blob, filename, title){
+  const wrap = document.createElement('div');
+  wrap.style.cssText = 'display:flex;flex-direction:column;align-items:center;gap:14px;color:#fff;padding:30px 16px;';
+  const nameEl = document.createElement('div');
+  nameEl.style.cssText = 'font-size:13.5px;font-weight:700;text-align:center;direction:ltr;word-break:break-all;';
+  nameEl.textContent = filename;
+  const iconEl = document.createElement('div');
+  iconEl.style.cssText = 'font-size:64px;line-height:1;';
+  iconEl.textContent = '📄';
+  wrap.appendChild(iconEl);
+  wrap.appendChild(nameEl);
+
+  openExportPreview({
+    title,
+    hint: 'اضغطي "حفظ PDF" لتنزيله مباشرة، أو "مشاركة" لإرساله لتطبيق آخر (واتساب، درايف...)',
+    bodyEl: wrap,
+    actions: [
+      { label: 'حفظ PDF 💾', primary:true, onClick: async ()=>{
+          const dataUrl = await blobToDataUrl(blob);
+          const a = document.createElement('a');
+          a.href = dataUrl;
+          a.download = filename;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          showToast('تم إرسال أمر الحفظ — تحققي من إشعارات الهاتف أو مجلد التنزيلات');
+        } },
+      { label: 'مشاركة ⇪', primary:false, onClick: async ()=>{
+          const shared = await tryNativeShare(blob, filename, 'application/pdf', title);
+          if(!shared) showToast('المشاركة غير مدعومة هنا، جربي "حفظ PDF"');
+        } },
+      { label: 'إغلاق', primary:false, onClick: closeExportPreview }
+    ]
+  });
+}
+
+function blobToDataUrl(blob){
+  return new Promise((resolve, reject)=>{
+    const reader = new FileReader();
+    reader.onload = ()=> resolve(reader.result);
+    reader.onerror = ()=> reject(reader.error);
+    reader.readAsDataURL(blob);
+  });
+}
+
+// ---------- field options config (hidden admin panel) ----------
+const CONFIG_KEY = 'app-config:field-options';
+const FIELD_LABELS = { nationality: 'الجنسية', gender: 'الجنس', diagnosis: 'التشخيص', status: 'الحالة', teamCode: 'رمز الفريق / النقطة', shift: 'الشفت' };
+let currentConfig = null;
+let draftConfig = null;
+
+const GROUP_NAMES_KEY = 'app-config:group-names';
+let currentGroupNames = null;
+let draftGroupNames = null;
+
+function defaultGroupNames(){
+  const names = {};
+  GROUPS.forEach(g=> names[g.id] = g.label);
+  return names;
+}
+
+function applyGroupNamesToUI(){
+  GROUPS.forEach(g=>{
+    const label = groupLabel(g.id);
+    document.querySelectorAll(`.group-box[data-group="${g.id}"] .group-box-title`).forEach(el=> el.textContent = label);
+    document.querySelectorAll(`.subtab-btn[data-group="${g.id}"]`).forEach(el=> el.textContent = label);
+  });
+}
+
+async function initGroupNamesConfig(){
+  const defaults = defaultGroupNames();
+  try{
+    const res = await window.storage.get(GROUP_NAMES_KEY, true);
+    const saved = (res && res.value) ? JSON.parse(res.value) : {};
+    currentGroupNames = {...defaults, ...saved};
+    GROUPS.forEach(g=>{
+      if(!currentGroupNames[g.id] || !String(currentGroupNames[g.id]).trim()){
+        currentGroupNames[g.id] = defaults[g.id];
+      }
+    });
+  }catch(e){
+    currentGroupNames = defaults;
+  }
+  applyGroupNamesToUI();
+}
+
+function defaultConfig(){
+  return {
+    nationality: ['عراقي','إيراني','باكستاني','أفغاني','هندي','لبناني','سوري','بحريني','كويتي','سعودي','أذربيجاني','أخرى'],
+    gender: ['ذكر','أنثى'],
+    diagnosis: ['إجهاد حراري','جفاف','إغماء','جرح سطحي','كسر','ضيق تنفس','آلام الصدر','ارتفاع ضغط الدم','انخفاض ضغط الدم','التهاب معوي','أخرى'],
+    teamCode: ['ح1 باب القبلة','أخرى'],
+    shift: ['صباحي','مسائي','ليلي'],
+    status: ['شفاء','نقل','رفض']
+  };
+}
+
+function populateSelect(id, options){
+  const el = document.getElementById(id);
+  const currentVal = el.value;
+  el.innerHTML = options.map(o => `<option>${escapeHtml(o)}</option>`).join('');
+  if(options.includes(currentVal)){
+    el.value = currentVal;
+  }else if(options.length){
+    el.value = options[0];
+  }
+  if(el._triggerEl) CustomSelect.syncTriggerLabel(el);
+}
+
+function applyConfigToForm(){
+  populateSelect('f-nationality', currentConfig.nationality);
+  renderRadioGroup(genderGroup, currentConfig.gender, 'gender');
+  populateSelect('f-diagnosis', currentConfig.diagnosis);
+  renderRadioGroup(shiftGroup, currentConfig.shift, 'shift');
+  renderRadioGroup(statusGroup, currentConfig.status, 'status');
+  renderRecordsShiftFilter();
+}
+
+async function initConfig(){
+  const defaults = defaultConfig();
+  try{
+    const res = await window.storage.get(CONFIG_KEY, true);
+    const saved = (res && res.value) ? JSON.parse(res.value) : {};
+    currentConfig = {...defaults, ...saved};
+    Object.keys(defaults).forEach(k=>{
+      if(!Array.isArray(currentConfig[k]) || currentConfig[k].length === 0){
+        currentConfig[k] = defaults[k];
+      }
+    });
+    // إصلاح تلقائي: "شفاء / نقل / رفض" حالات أساسية مرتبطة مباشرة بمنطق التقارير
+    // والإحصائيات بالتطبيق. لو انحذف أي منها بالغلط سابقًا من لوحة التحكم على هذا
+    // الجهاز (تحفظ محليًا فقط)، نرجّعها تلقائيًا حتى ما تختفي من الفورم بدون تفسير،
+    // مع الحفاظ على ترتيبها الأصلي (شفاء، نقل، رفض) وعلى أي حالات إضافية زادها المستخدم بنفسه.
+    const essentialStatus = ['شفاء','نقل','رفض'];
+    essentialStatus.forEach(s=>{
+      if(!currentConfig.status.includes(s)) currentConfig.status.push(s);
+    });
+    currentConfig.status.sort((a,b)=>{
+      const ia = essentialStatus.indexOf(a), ib = essentialStatus.indexOf(b);
+      if(ia===-1 && ib===-1) return 0;
+      if(ia===-1) return 1;
+      if(ib===-1) return -1;
+      return ia-ib;
+    });
+  }catch(e){
+    currentConfig = defaults;
+  }
+  applyConfigToForm();
+}
+
+// ---------- hidden admin trigger: tap the header badge 5 times quickly ----------
+let badgeTapCount = 0;
+let badgeTapTimer = null;
+const headerBadgeEl = document.getElementById('headerBadge');
+if(headerBadgeEl){
+  headerBadgeEl.addEventListener('click', ()=>{
+    badgeTapCount++;
+    clearTimeout(badgeTapTimer);
+    badgeTapTimer = setTimeout(()=>{ badgeTapCount = 0; }, 1500);
+    if(badgeTapCount >= 5){
+      badgeTapCount = 0;
+      openAdmin();
+    }
+  });
+}
+
+function openAdmin(){
+  draftConfig = JSON.parse(JSON.stringify(currentConfig || defaultConfig()));
+  draftGroupNames = JSON.parse(JSON.stringify(currentGroupNames || defaultGroupNames()));
+  renderAdminBody();
+  document.getElementById('adminOverlay').classList.add('show');
+}
+
+function closeAdmin(){
+  document.getElementById('adminOverlay').classList.remove('show');
+}
+
+function openBackupPanel(){
+  renderDriveAccountBadge();
+  document.getElementById('backupOverlay').classList.add('show');
+}
+
+function closeBackupPanel(){
+  document.getElementById('backupOverlay').classList.remove('show');
+}
+
+function renderAdminBody(){
+  const body = document.getElementById('adminBody');
+  body.innerHTML = renderGroupNamesSection() +
+    Object.keys(FIELD_LABELS).map(fieldKey => renderAdminSection(fieldKey)).join('');
+}
+
+function renderGroupNamesSection(){
+  const defaults = defaultGroupNames();
+  return `
+    <div class="admin-section">
+      <div class="admin-section-title">أسماء المجموعات</div>
+      <div class="admin-group-name-list">
+        ${GROUPS.map(g => `
+          <div class="admin-group-name-row">
+            <span class="admin-group-name-label">الاسم المعروض <b>(الافتراضي: ${escapeHtml(defaults[g.id])})</b></span>
+            <input type="text" id="adminGroupName-${g.id}" value="${escapeHtml(draftGroupNames[g.id] || '')}" oninput="updateDraftGroupName('${g.id}', this.value)">
+          </div>`).join('')}
+      </div>
+    </div>`;
+}
+
+function updateDraftGroupName(groupId, value){
+  draftGroupNames[groupId] = value;
+}
+
+function renderAdminSection(fieldKey){
+  const options = draftConfig[fieldKey] || [];
+  return `
+    <div class="admin-section">
+      <div class="admin-section-title-row">
+        <div class="admin-section-title">${FIELD_LABELS[fieldKey]}</div>
+        <button type="button" class="admin-reset-btn" onclick="resetAdminFieldToDefault('${fieldKey}')" title="يرجّع خيارات هذا الحقل لوضعها الافتراضي (مثل: شفاء / نقل / رفض للحالة)">استعادة الافتراضي</button>
+      </div>
+      <div class="admin-chip-list">
+        ${options.map((opt, idx) => `
+          <div class="admin-option-row">
+            <span class="admin-option-order">${idx+1}</span>
+            <input type="text" class="admin-option-text-input" value="${escapeHtml(opt)}"
+              oninput="updateAdminOptionText('${fieldKey}', ${idx}, this.value)"
+              onblur="finalizeAdminOptionText('${fieldKey}', ${idx}, this)">
+            <div class="admin-option-actions">
+              <button type="button" class="admin-move-btn" onclick="moveAdminOption('${fieldKey}', ${idx}, -1)" ${idx===0 ? 'disabled' : ''} title="نقل لأعلى">▲</button>
+              <button type="button" class="admin-move-btn" onclick="moveAdminOption('${fieldKey}', ${idx}, 1)" ${idx===options.length-1 ? 'disabled' : ''} title="نقل لأسفل">▼</button>
+              <button type="button" class="admin-remove-btn" onclick="removeAdminOption('${fieldKey}', ${idx})" title="حذف">✕</button>
+            </div>
+          </div>`).join('') || '<span class="admin-empty-hint">لا توجد خيارات بعد</span>'}
+      </div>
+      <div class="admin-add-row">
+        <input type="text" id="adminInput-${fieldKey}" placeholder="إضافة خيار جديد">
+        <button type="button" class="admin-add-btn" onclick="addAdminOption('${fieldKey}')">إضافة</button>
+      </div>
+    </div>`;
+}
+
+function updateAdminOptionText(fieldKey, idx, value){
+  if(!draftConfig[fieldKey]) return;
+  draftConfig[fieldKey][idx] = value;
+}
+
+function finalizeAdminOptionText(fieldKey, idx, inputEl){
+  if(!draftConfig[fieldKey]) return;
+  const val = draftConfig[fieldKey][idx].trim();
+  if(!val){
+    // don't allow an option to be left blank — restore whatever was last valid
+    showToast('لا يمكن ترك اسم الخيار فارغاً');
+    draftConfig[fieldKey][idx] = inputEl.defaultValue;
+    inputEl.value = inputEl.defaultValue;
+    return;
+  }
+  draftConfig[fieldKey][idx] = val;
+  inputEl.value = val;
+  inputEl.defaultValue = val;
+}
+
+function moveAdminOption(fieldKey, idx, direction){
+  const arr = draftConfig[fieldKey];
+  const newIdx = idx + direction;
+  if(newIdx < 0 || newIdx >= arr.length) return;
+  [arr[idx], arr[newIdx]] = [arr[newIdx], arr[idx]];
+  renderAdminBody();
+}
+
+function addAdminOption(fieldKey){
+  const input = document.getElementById(`adminInput-${fieldKey}`);
+  const val = input.value.trim();
+  if(!val) return;
+  if(!draftConfig[fieldKey].includes(val)){
+    draftConfig[fieldKey].push(val);
+  }
+  renderAdminBody();
+  const refocus = document.getElementById(`adminInput-${fieldKey}`);
+  if(refocus) refocus.focus();
+}
+
+function removeAdminOption(fieldKey, idx){
+  if(draftConfig[fieldKey].length <= 1){
+    showToast('يجب إبقاء خيار واحد على الأقل بكل حقل');
+    return;
+  }
+  draftConfig[fieldKey].splice(idx, 1);
+  renderAdminBody();
+}
+
+// يرجّع خيارات حقل معيّن (مثلاً: الحالة) لقائمتها الافتراضية — يحل مشكلة اختفاء خيار
+// (مثل "نقل") بعد ما ينحذف بالغلط من لوحة التحكم، بدون التأثير على باقي الحقول.
+function resetAdminFieldToDefault(fieldKey){
+  const defaults = defaultConfig();
+  if(!defaults[fieldKey]) return;
+  draftConfig[fieldKey] = [...defaults[fieldKey]];
+  renderAdminBody();
+  showToast('تمت استعادة الخيارات الافتراضية لهذا الحقل — لا تنسَ الضغط على "حفظ التغييرات"');
+}
+
+async function saveAdminConfig(){
+  const saveAdminBtn = document.getElementById('adminSaveBtn');
+  saveAdminBtn.disabled = true;
+  saveAdminBtn.textContent = 'جارِ الحفظ...';
+  try{
+    GROUPS.forEach(g=>{
+      if(!draftGroupNames[g.id] || !String(draftGroupNames[g.id]).trim()){
+        draftGroupNames[g.id] = defaultGroupNames()[g.id];
+      }else{
+        draftGroupNames[g.id] = String(draftGroupNames[g.id]).trim();
+      }
+    });
+
+    const result = await window.storage.set(CONFIG_KEY, JSON.stringify(draftConfig), true);
+    if(!result) throw new Error('save failed');
+    const groupResult = await window.storage.set(GROUP_NAMES_KEY, JSON.stringify(draftGroupNames), true);
+    if(!groupResult) throw new Error('save failed');
+
+    currentConfig = JSON.parse(JSON.stringify(draftConfig));
+    currentGroupNames = JSON.parse(JSON.stringify(draftGroupNames));
+    applyConfigToForm();
+    applyGroupNamesToUI();
+    renderSubtabs('statsGroupTabs', statsActiveGroup);
+    renderSubtabs('recordsGroupTabs', recordsActiveGroup);
+    if(document.getElementById('screen-stats').classList.contains('active')) loadAndRenderStats();
+    if(document.getElementById('screen-records').classList.contains('active')) loadAndRenderRecords();
+    showToast('تم حفظ الإعدادات');
+    closeAdmin();
+  }catch(e){
+    console.error('saveAdminConfig error', e);
+    showToast('تعذّر حفظ الإعدادات، حاول مرة أخرى');
+  }finally{
+    saveAdminBtn.disabled = false;
+    saveAdminBtn.textContent = 'حفظ التغييرات ✓';
+  }
+}
+
+// ---------- init ----------
+refreshSavedCount();
+initConfig();
+initDriveSync();
+initGroupNamesConfig().then(()=>{
+  initGroupSelector();
+});
+requestAnimationFrame(()=>{
+  requestAnimationFrame(()=> moveTabIndicator(document.getElementById('tabFormBtn')));
+});
+</script>
+
+<div class="admin-overlay" id="adminOverlay">
+  <div class="admin-panel">
+    <div class="admin-header">
+      <h2>لوحة تحكم الحقول</h2>
+      <button type="button" class="admin-close" onclick="closeAdmin()">✕</button>
+    </div>
+    <div class="admin-body" id="adminBody"></div>
+    <div class="admin-footer">
+      <button type="button" class="btn btn-save" id="adminSaveBtn" onclick="saveAdminConfig()">حفظ التغييرات ✓</button>
+    </div>
+  </div>
+</div>
+
+<div class="admin-overlay" id="backupOverlay">
+  <div class="admin-panel">
+    <div class="admin-header">
+      <h2>النسخ الاحتياطي — Google Drive</h2>
+      <button type="button" class="admin-close" onclick="closeBackupPanel()">✕</button>
+    </div>
+    <div class="admin-body">
+      <p style="font-size:12.5px; opacity:0.7; margin-bottom:14px;">نسخة احتياطية اختيارية بحسابك الشخصي على Google Drive — بياناتك تبقى بجهازك، وهذا فقط احتياط إضافي لو حبيت. يشمل الحفظ والاسترجاع بيانات مجموعتي إدارة الكوارث والسفير مع بعض.</p>
+
+      <div id="driveAccountBadge" style="display:none; align-items:center; gap:10px; background:var(--color-primary-soft); border:1px solid var(--color-border); border-radius:var(--radius-md); padding:10px 12px; margin-bottom:14px;">
+        <img id="driveUserPic" src="" alt="" style="width:38px;height:38px;border-radius:50%;flex-shrink:0;object-fit:cover;background:var(--color-border);">
+        <div style="flex:1; min-width:0;">
+          <div id="driveUserName" style="font-weight:700; font-size:13.5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;"></div>
+          <div id="driveUserEmail" style="font-size:11.5px; opacity:0.65; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;"></div>
+        </div>
+        <button type="button" onclick="signOutDrive()" style="border:none; background:none; color:var(--color-danger); font-size:12.5px; cursor:pointer; white-space:nowrap; padding:4px;">خروج</button>
+      </div>
+      <div id="driveNotConnectedHint" style="font-size:12.5px; opacity:0.6; margin-bottom:14px;">ما سجلت دخول بحساب Google بعد — اضغط "حفظ نسخة" أو "استرجاع" أدناه لتسجيل الدخول.</div>
+
+      <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; background:var(--color-card); border:1px solid var(--color-border); border-radius:var(--radius-md); padding:12px 14px; margin-bottom:16px; box-shadow:var(--shadow-card);">
+        <div style="min-width:0;">
+          <div style="font-weight:700; font-size:13.5px;">الحفظ التلقائي</div>
+          <div id="autoSyncStatus" style="font-size:11.5px; opacity:0.6; margin-top:2px;">كل 15 دقيقة على Google Drive</div>
+        </div>
+        <label style="position:relative; display:inline-block; width:46px; height:26px; flex-shrink:0;">
+          <input type="checkbox" id="autoSyncToggle" onchange="toggleAutoSync(this.checked)" style="opacity:0; width:0; height:0;">
+          <span id="autoSyncSwitchTrack" style="position:absolute; inset:0; background:var(--color-border); border-radius:999px; transition:background .25s var(--ease-smooth); cursor:pointer;" onclick="document.getElementById('autoSyncToggle').click()"></span>
+          <span id="autoSyncSwitchThumb" style="position:absolute; top:3px; right:3px; width:20px; height:20px; background:#fff; border-radius:50%; box-shadow:0 1px 3px rgba(0,0,0,0.25); transition:transform .25s var(--ease-spring); pointer-events:none;"></span>
+        </label>
+      </div>
+
+      <button class="btn btn-export" onclick="backupToDrive()">حفظ نسخة في Google Drive ☁️</button>
+      <button class="btn btn-export" style="margin-top:10px;" onclick="restoreFromDrive()">استرجاع من Google Drive ⤓</button>
+
+      <div style="height:1px; background:var(--color-border); margin:20px 0 16px;"></div>
+      <h3 style="font-size:14px; margin:0 0 6px;">نقل مباشر بين الأجهزة (بدون إنترنت)</h3>
+      <p style="font-size:12.5px; opacity:0.7; margin-bottom:12px;">صدّري ملف نقل وأرسليه لزميلتك عبر واتساب أو تيليجرام، وهي تستورده على جهازها — يُضاف للبيانات الموجودة عندها بدون تكرار أو حذف.</p>
+      <button class="btn btn-export" onclick="exportTransferFile()">تصدير ملف نقل 📤</button>
+      <button class="btn btn-export" style="margin-top:10px;" onclick="triggerImportTransferFile()">استيراد من ملف 📥</button>
+      <input type="file" id="transferFileInput" accept=".json,application/json,text/plain,*/*" style="position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0;" onchange="handleTransferFileSelected(this)">
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
