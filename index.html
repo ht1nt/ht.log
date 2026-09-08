@@ -392,16 +392,16 @@ async function saveKey(key, value){
 }
 
 async function loadAll(){
-  const [settings, products, slides, orders] = await Promise.all([
+  /* الطلبات ما تنحمّل هنا: المتجر ما يحتاجها إلا وقت إرسال طلب جديد،
+     وتحميلها لكل زائر كان يبطئ فتح الصفحة ويسرّب بيانات الزباين بلا داعي. */
+  const [settings, products, slides] = await Promise.all([
     loadKey('settings', DEFAULTS.settings),
     loadKey('products', DEFAULTS.products),
-    loadKey('slides', DEFAULTS.slides),
-    loadKey('orders', [])
+    loadKey('slides', DEFAULTS.slides)
   ]);
   STATE.settings = settings;
   STATE.products = products;
   STATE.slides = slides;
-  STATE.orders = orders;
 }
 
 /* ---------------- Storefront rendering ---------------- */
@@ -649,7 +649,9 @@ document.getElementById('sendOrder').addEventListener('click', async ()=>{
 
   window.open(`https://wa.me/${STATE.settings.whatsapp}?text=${msg}`, '_blank');
 
-  STATE.orders.unshift({
+  /* نجيب قائمة الطلبات الحالية فقط الآن (وقت الإرسال)، مو من بداية فتح الصفحة */
+  const currentOrders = await loadKey('orders', []);
+  currentOrders.unshift({
     id: uid(),
     name, phone, address,
     items: entries.map(e=>({ name:e.product.name, qty:e.qty, price:e.product.price })),
@@ -657,7 +659,7 @@ document.getElementById('sendOrder').addEventListener('click', async ()=>{
     time: new Date().toISOString(),
     status: 'pending'
   });
-  await saveKey('orders', STATE.orders);
+  await saveKey('orders', currentOrders);
 
   closeModal(); closeDrawer();
   cart = {}; renderCart();
