@@ -42,11 +42,7 @@
   .wrap{max-width:1160px;margin:0 auto;padding:0 22px;}
   .hidden{display:none !important;}
 
-  #loadingScreen{
-    position:fixed;inset:0;background:var(--bg);
-    display:flex;align-items:center;justify-content:center;
-    color:var(--text-muted);font-size:14px;z-index:200;
-  }
+  /* تم إلغاء واجهة التحميل: نعرض شاشة الدخول أو اللوحة فوراً */
 
   .icon-btn{
     background:transparent;border:1px solid var(--line);color:var(--text-muted);
@@ -124,8 +120,6 @@
 </style>
 </head>
 <body>
-
-<div id="loadingScreen">جارٍ التحقق من الجلسة...</div>
 
 <!-- ========================= LOGIN ========================= -->
 <div id="loginScreen" class="hidden">
@@ -334,7 +328,6 @@ async function loadRest(){
 const SESSION_KEY = 'admin_authed_session';
 
 function showLogin(){
-  document.getElementById('loadingScreen').classList.add('hidden');
   document.getElementById('dashboard').classList.add('hidden');
   document.getElementById('loginScreen').classList.remove('hidden');
   document.getElementById('adminPassInput').value = '';
@@ -343,16 +336,18 @@ function showLogin(){
 
 async function attemptLogin(){
   const val = document.getElementById('adminPassInput').value;
+  document.getElementById('submitLogin').disabled = true;
+  await settingsReady; /* غالباً وصلت أصلاً وقت ما المستخدم يكتب كلمة المرور */
   if(val === STATE.settings.adminPassword){
     sessionStorage.setItem(SESSION_KEY, '1');
     document.getElementById('loginError').classList.remove('show');
-    document.getElementById('submitLogin').disabled = true;
-    await restReady; /* غالباً خلصت وهم بالخلفية أثناء كتابة كلمة المرور */
-    document.getElementById('submitLogin').disabled = false;
-    enterDashboard();
+    enterDashboard(); /* يظهر فوراً بالقيم المتوفرة لحد الآن */
+    await restReady;
+    enterDashboard(); /* يتحدّث بالبيانات الحقيقية أول ما توصل */
   }else{
     document.getElementById('loginError').classList.add('show');
   }
+  document.getElementById('submitLogin').disabled = false;
 }
 document.getElementById('submitLogin').addEventListener('click', attemptLogin);
 document.getElementById('adminPassInput').addEventListener('keydown', (e)=>{
@@ -368,7 +363,6 @@ document.getElementById('logoutBtn').addEventListener('click', ()=>{
    DASHBOARD LOGIC
    ============================================================ */
 function enterDashboard(){
-  document.getElementById('loadingScreen').classList.add('hidden');
   document.getElementById('loginScreen').classList.add('hidden');
   document.getElementById('dashboard').classList.remove('hidden');
   renderProductForm();
@@ -631,10 +625,13 @@ document.getElementById('resetDefaultsBtn').addEventListener('click', async ()=>
 
 /* ---------------- Boot ---------------- */
 let restReady = null;
+let settingsReady = null;
 (async function init(){
-  await loadSettings();
-  restReady = loadRest(); /* تبدأ بالخلفية فوراً، ما ننتظرها هنا */
+  /* نفتح شاشة الدخول أو اللوحة فوراً بدون انتظار الشبكة إطلاقاً */
+  settingsReady = loadSettings();
+  restReady = loadRest();
   if(sessionStorage.getItem(SESSION_KEY) === '1'){
+    enterDashboard(); /* يظهر فوراً بالقيم الافتراضية، ويتحدّث لحاله بعد وصول البيانات */
     await restReady;
     enterDashboard();
   }else{
