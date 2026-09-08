@@ -311,14 +311,20 @@ async function saveKey(key, value){
   }
 }
 
-async function loadAll(){
-  const [settings, products, slides, orders] = await Promise.all([
-    loadKey('settings', DEFAULTS.settings),
+/* الإعدادات مستند صغير وخفيف، فنحمّله لحاله أول شي عشان شاشة تسجيل
+   الدخول (المحتاجة الإعدادات فقط للتحقق من كلمة المرور) تفتح بأسرع وقت،
+   بدون ما تنتظر تحميل المنتجات (الأثقل) والسلايدر والطلبات. */
+async function loadSettings(){
+  STATE.settings = await loadKey('settings', DEFAULTS.settings);
+}
+/* هذا يشتغل بالخلفية بنفس وقت ما المستخدم يكتب كلمة المرور،
+   فيصير جاهز غالباً قبل لا يضغط دخول. */
+async function loadRest(){
+  const [products, slides, orders] = await Promise.all([
     loadKey('products', DEFAULTS.products),
     loadKey('slides', DEFAULTS.slides),
     loadKey('orders', [])
   ]);
-  STATE.settings = settings;
   STATE.products = products;
   STATE.slides = slides;
   STATE.orders = orders;
@@ -340,6 +346,9 @@ async function attemptLogin(){
   if(val === STATE.settings.adminPassword){
     sessionStorage.setItem(SESSION_KEY, '1');
     document.getElementById('loginError').classList.remove('show');
+    document.getElementById('submitLogin').disabled = true;
+    await restReady; /* غالباً خلصت وهم بالخلفية أثناء كتابة كلمة المرور */
+    document.getElementById('submitLogin').disabled = false;
     enterDashboard();
   }else{
     document.getElementById('loginError').classList.add('show');
@@ -621,9 +630,12 @@ document.getElementById('resetDefaultsBtn').addEventListener('click', async ()=>
 });
 
 /* ---------------- Boot ---------------- */
+let restReady = null;
 (async function init(){
-  await loadAll();
+  await loadSettings();
+  restReady = loadRest(); /* تبدأ بالخلفية فوراً، ما ننتظرها هنا */
   if(sessionStorage.getItem(SESSION_KEY) === '1'){
+    await restReady;
     enterDashboard();
   }else{
     showLogin();
