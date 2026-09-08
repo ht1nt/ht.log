@@ -43,11 +43,7 @@
   .hidden{display:none !important;}
 
   /* ---- Loading screen ---- */
-  #loadingScreen{
-    position:fixed;inset:0;background:var(--bg);
-    display:flex;align-items:center;justify-content:center;
-    color:var(--text-muted);font-size:14px;z-index:200;
-  }
+  /* تم إلغاء واجهة التحميل: المتجر يظهر فوراً */
 
   /* ---- Top delivery strip ---- */
   .strip{
@@ -248,9 +244,7 @@
 </head>
 <body>
 
-<div id="loadingScreen">جارٍ تحميل المتجر...</div>
-
-<div id="storefront" class="hidden">
+<div id="storefront">
 
   <div class="strip"><span id="stripText">التوصيل مجاني على جميع الطلبات</span><span class="pulse"></span></div>
 
@@ -669,16 +663,18 @@ document.getElementById('sendOrder').addEventListener('click', async ()=>{
 });
 
 /* ---------------- Boot ---------------- */
-(async function init(){
-  await loadAll();
+function renderStorefront(){
   renderBrandAndStrip();
   renderHero();
   renderCats();
   renderGrid();
   renderCart();
   handleRoute();
-  document.getElementById('loadingScreen').classList.add('hidden');
-  document.getElementById('storefront').classList.remove('hidden');
+}
+(async function init(){
+  renderStorefront(); /* يظهر فوراً بالقيم الافتراضية بدون أي واجهة تحميل */
+  await loadAll();
+  renderStorefront(); /* يتحدّث بالبيانات الحقيقية أول ما توصل */
 })();
 </script>
 </body>
