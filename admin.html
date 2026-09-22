@@ -3,18 +3,8 @@
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>لوحة تحكم المتجر</title><link rel="stylesheet" href="admin.css"></head>
 <body>
 
-<div class="login-screen" id="loginScreen">
-  <form class="login-box" id="loginForm">
-    <h2>تسجيل الدخول للوحة التحكم</h2>
-    <label>البريد الإلكتروني<input type="email" id="loginEmail" required autocomplete="username"></label>
-    <label>كلمة المرور<input type="password" id="loginPass" required autocomplete="current-password"></label>
-    <p class="login-error" id="loginError"></p>
-    <button class="primary" type="submit">دخول</button>
-  </form>
-</div>
-
-<div id="adminApp" class="hidden">
-<header><a class="brand" href="index.html">متجري</a><div><span id="adminCount"></span><a class="store-link" href="index.html">عرض المتجر ↗</a><button class="store-link" id="logoutBtn" style="border:0;background:transparent;cursor:pointer;font:inherit">خروج ⏻</button></div></header>
+<div id="adminApp">
+<header><a class="brand" href="index.html">متجري</a><div><span id="adminCount"></span><a class="store-link" href="index.html">عرض المتجر ↗</a></div></header>
 <main>
 <section class="stats"><div><span>المنتجات</span><b id="statProducts">0</b></div><div><span>المخزون</span><b id="statStock">0</b></div><div><span>قيمة المنتجات</span><b id="statValue">0</b></div></section>
 <div class="layout">
@@ -41,7 +31,6 @@
 </form></div></div>
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
 <script src="firebase-config.js"></script>
 <script src="admin.js"></script>
 </body></html>
