@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>لوحة تحكم المتجر</title><link rel="stylesheet" href="admin.css"></head>
+<body>
+<header><a class="brand" href="index.html">متجري</a><div><span id="adminCount"></span><a class="store-link" href="index.html">عرض المتجر ↗</a></div></header>
+<main>
+<section class="stats"><div><span>المنتجات</span><b id="statProducts">0</b></div><div><span>المخزون</span><b id="statStock">0</b></div><div><span>قيمة المنتجات</span><b id="statValue">0</b></div></section>
+<div class="layout">
+<aside><button class="side active" data-page="products">📦 المنتجات</button><button class="side" data-page="settings">⚙️ إعدادات المتجر</button><div class="hint">ملاحظة: هذه لوحة تحكم ثابتة تعمل عبر LocalStorage. البيانات والصور محفوظة في نفس المتصفح والجهاز.</div></aside>
+<section class="content" id="productsPage">
+<div class="title-row"><div><span class="eyebrow">إدارة المتجر</span><h1>المنتجات</h1></div><button class="primary" id="addBtn">+ إضافة منتج</button></div>
+<div class="toolbar"><input id="adminSearch" placeholder="ابحث باسم المنتج أو SKU..."><select id="adminCat"><option value="all">كل الأقسام</option><option value="electronics">إلكترونيات</option><option value="home">منزل</option><option value="fashion">أزياء</option></select></div>
+<div class="table-wrap"><table><thead><tr><th>المنتج</th><th>SKU</th><th>القسم</th><th>السعر</th><th>المخزون</th><th>الإجراءات</th></tr></thead><tbody id="adminRows"></tbody></table></div>
+</section>
+<section class="content hidden" id="settingsPage">
+<div class="title-row"><div><span class="eyebrow">إعدادات</span><h1>بيانات المتجر</h1></div></div>
+<div class="settings-card"><label>اسم المتجر<input id="storeName" value="متجري"></label><label>رقم واتساب<input id="waNumber" value="9647700000000"></label><label>وصف المتجر<textarea id="storeDesc">متجر إلكتروني عصري وسهل الاستخدام.</textarea></label><button class="primary" id="saveSettings">حفظ الإعدادات</button></div>
+</section>
+</div>
+</main>
+<div class="modal" id="productEditor"><div class="modal-box"><div class="modal-head"><h2 id="formTitle">إضافة منتج</h2><button id="closeEditor">×</button></div>
+<form id="productForm">
+<input type="hidden" id="editId">
+<div class="image-upload"><div id="preview">📷</div><label class="upload-btn">رفع صورة المنتج<input type="file" id="imageFile" accept="image/*"></label><small>الصورة تحفظ داخل المتصفح، ويفضل صورة مضغوطة.</small></div>
+<div class="form-grid"><label>اسم المنتج *<input id="pName" required></label><label>SKU<input id="pSku"></label><label>القسم<select id="pCat"><option value="electronics">إلكترونيات</option><option value="home">منزل</option><option value="fashion">أزياء</option></select></label><label>اسم القسم<input id="pCategory" placeholder="إلكترونيات"></label><label>السعر *<input id="pPrice" type="number" required min="0"></label><label>السعر القديم<input id="pOld" type="number" min="0"></label><label>المخزون<input id="pStock" type="number" min="0" value="0"></label><label>شارة المنتج<input id="pBadge" placeholder="جديد / خصم / عرض"></label></div>
+<label>وصف المنتج<textarea id="pDesc" rows="4"></textarea></label>
+<div class="actions"><button type="button" class="cancel" id="cancelEditor">إلغاء</button><button class="primary" type="submit">حفظ المنتج</button></div>
+</form></div></div>
+<script src="admin.js"></script>
+</body></html>
