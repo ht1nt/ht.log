@@ -89,30 +89,3 @@ productsCol?.onSnapshot(snap=>{
   console.error(err);
   $("#adminRows").innerHTML=`<tr><td colspan="6" style="text-align:center;padding:35px;color:#a33">تعذر الاتصال بقاعدة البيانات. تحقق من إعدادات Firebase وقواعد الأمان (Firestore rules).</td></tr>`;
 });
-
-// ---- تسجيل الدخول (Firebase Auth) ----
-auth.onAuthStateChanged(user=>{
-  if(user){
-    $("#loginScreen").classList.add("hidden");
-    $("#adminApp").classList.remove("hidden");
-  }else{
-    $("#loginScreen").classList.remove("hidden");
-    $("#adminApp").classList.add("hidden");
-  }
-});
-
-$("#loginForm").onsubmit=async e=>{
-  e.preventDefault();
-  $("#loginError").textContent="";
-  let btn=e.target.querySelector('button[type="submit"]'),oldText=btn.textContent;
-  btn.disabled=true;btn.textContent="جارٍ الدخول...";
-  try{
-    await auth.signInWithEmailAndPassword($("#loginEmail").value.trim(),$("#loginPass").value);
-  }catch(err){
-    $("#loginError").textContent="فشل تسجيل الدخول: تحقق من البريد الإلكتروني وكلمة المرور.";
-  }finally{
-    btn.disabled=false;btn.textContent=oldText;
-  }
-};
-
-$("#logoutBtn").onclick=()=>auth.signOut();
